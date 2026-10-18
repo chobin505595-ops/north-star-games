@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2E9E5B">
+<title>绿鳄王游戏屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232E9E5B'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle'%3E%F0%9F%90%9C%3C/text%3E%3C/svg%3E">
+<style>
+:root{--green:#2E9E5B;--green-dark:#1F7A45;--green-deep:#173B2A;--yellow:#FFC53D;--orange:#FF8A3D;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(160deg,#EAF7EF,#DDF0E4);color:var(--green-deep);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.wrap{width:100%;max-width:520px}
+.card{background:#fff;border-radius:28px;box-shadow:0 10px 30px rgba(23,59,42,.12);padding:28px 24px;
+  animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+h1{font-size:28px;font-weight:900;text-align:center}
+.sub{text-align:center;color:#5a7a68;font-size:15px;margin-top:8px;line-height:1.6}
+a.btn{display:block;text-decoration:none;text-align:center;border-radius:18px;font-weight:800;
+  font-size:19px;padding:18px;color:#fff;background:var(--green);margin-top:16px;
+  box-shadow:0 6px 0 var(--green-dark);transition:transform .1s}
+a.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--green-dark)}
+a.btn .t{font-size:12px;font-weight:600;opacity:.92;display:block;margin-top:3px}
+a.btn.s2{background:var(--orange);box-shadow:0 6px 0 #cf6a24}
+a.btn.s2:active{box-shadow:0 2px 0 #cf6a24}
+.tip{margin-top:18px;font-size:13px;color:#6b8a79;line-height:1.7;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+  <h1>🐊 绿鳄王游戏屋</h1>
+  <p class="sub">点一下就玩，不用联网也能玩（第一次打开后会自动存到手机里）</p>
+  <a class="btn" href="season1.html">第一季 · 乘法口诀大冒险<span class="t">2~9 的口诀，9 关闯关</span></a>
+  <a class="btn s2" href="season2.html">第二季 · 虫虫大冒险<span class="t">昆虫主题 · 应用题，9 关 + 生物卡图鉴</span></a>
+  <p class="tip">想放到手机桌面：用 Safari 打开本页 → 分享 → 「添加到主屏幕」</p>
+</div></div>
+</body>
+</html>
