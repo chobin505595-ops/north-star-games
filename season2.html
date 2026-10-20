@@ -51,6 +51,14 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
   padding:18px 0;cursor:pointer;font-family:inherit;color:var(--green-deep);min-height:64px;
   transition:transform .1s,background .15s,border-color .15s}
 .opts.txt .opt{font-size:19px;padding:14px 6px}
+.inputrow{display:flex;gap:12px;align-items:stretch}
+.ansinput{flex:1;border:3px solid #dcebe2;background:#fff;border-radius:18px;font-size:28px;
+  font-weight:800;text-align:center;font-family:inherit;color:var(--green-deep);padding:14px;
+  min-height:64px;outline:none;transition:border-color .15s,background .15s;-webkit-appearance:none}
+.ansinput::placeholder{font-size:17px;font-weight:600;color:#a8bfb3}
+.ansinput:focus{border-color:var(--green)}
+.ansinput.right{border-color:var(--green);background:#eaf7ef;color:var(--green-dark)}
+.ansinput.wrong{border-color:var(--red);background:#fdeeee}
 .opt:active{transform:scale(.97)}
 .opt.right{background:var(--green);border-color:var(--green);color:#fff}
 .opt.wrong{background:var(--red);border-color:var(--red);color:#fff}
@@ -156,13 +164,13 @@ var TH = {
 /* ===== 关卡（9关，逐关解锁） ===== */
 var LEVELS = [
   {name:'蚂蚁军团',      theme:'ant',       card:'ant',       types:['mul'],                      count:8},
-  {name:'蜜蜂蜂巢',      theme:'bee',       card:'bee',       types:['divShare'],                 count:8},
-  {name:'蝴蝶花园',      theme:'butterfly', card:'butterfly',  types:['divGroup'],                 count:8},
+  {name:'蜜蜂蜂巢',      theme:'bee',       card:'bee',       types:['divShare'],                 count:8, locked:true},
+  {name:'蝴蝶花园',      theme:'butterfly', card:'butterfly',  types:['divGroup'],                 count:8, locked:true},
   {name:'独角仙擂台',    theme:'beetle',    card:'beetle',    types:['add','sub'],                count:8},
   {name:'螳螂草丛',      theme:'mantis',    card:'mantis',    types:['mul','add','sub'],          count:8},
-  {name:'蜻蜓点水',      theme:'dragonfly', card:'dragonfly', types:['mul','divShare','divGroup'],count:8},
+  {name:'蜻蜓点水',      theme:'dragonfly', card:'dragonfly', types:['mul','add','sub'],          count:8},
   {name:'水蛭沼泽',      theme:'leech',     card:'leech',     types:['sub','add','more'],         count:8},
-  {name:'杀人蜂警报',    theme:'killer',    card:'killer',    types:['mul','divShare','divGroup'],count:8, hard:true},
+  {name:'杀人蜂警报',    theme:'killer',    card:'killer',    types:['mul','add','sub'],          count:8, hard:true},
   {name:'真假昆虫侦探',  theme:'final',     card:'octopus',   final:true,                         count:10}
 ];
 
@@ -199,7 +207,13 @@ if(storageAvailable){
   }catch(e){}
 }
 function save(){ if(storageAvailable){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){} } }
-function isUnlocked(i){ return i===0 || (progress.stars[i-1] && progress.stars[i-1]>0); }
+/* 上一个"没被封门"的关卡：算解锁条件时跳过 locked 的关 */
+function prevOpen(i){ for(var j=i-1;j>=0;j--){ if(!LEVELS[j].locked) return j; } return -1; }
+function isUnlocked(i){
+  if(LEVELS[i].locked) return false;
+  var p = prevOpen(i);
+  return p<0 || !!(progress.stars[p] && progress.stars[p]>0);
+}
 function cardCount(){ return Object.keys(progress.cards).filter(function(k){ return progress.cards[k]; }).length; }
 
 /* ===== 成就 ===== */
@@ -345,14 +359,19 @@ function genMath(level, type){
     opts = pickOptions(ans, [s-d2>0? s-d2 : s+d2+10, ans+10, ans-10, ans+1, ans-1]);
   }
   else if(type==='twoStep'){
-    a = 3+rnd(5); b = 2+rnd(3); var c = 2+rnd(8);
-    var tot = a*b; ans = tot-c;
+    a = 3+rnd(5); b = 2+rnd(3);
+    var tot = a*b;
+    var cMax = Math.min(8, tot-1);          // 放走的最多 = 总数-1，保证答案 ≥1
+    var c = 2+rnd(cMax-1);
+    ans = tot-c;
     ctx  = '每盒装 '+a+' 只'+who+'，'+b+' 盒一共有多少只？后来有 '+c+' 只被放走了，还剩多少只？';
     hint = a+' × '+b+' = '+tot+'；'+tot+' - '+c+' = '+ans;
     opts = pickOptions(ans, [tot, tot+c, ans+1, ans-1]);
   }
   else { return null; }
 
+  /* 把题目里的数字标成橙色，帮他把眼睛放到关键信息上（练读题） */
+  ctx = ctx.replace(/(\d+)/g, '<b>$1</b>');
   return {type:type, ctx:ctx, ans:String(ans), hint:hint, options:opts, theme:level.theme};
 }
 
@@ -379,7 +398,7 @@ function genLevel(level){
   var qs = [];
   if(level.final){
     var plan = ['classify','classify','classify','twoStep','twoStep'].concat(
-      ['mul','divShare','divGroup','add','sub']);
+      ['mul','mul','more','add','sub']);
     plan = shuffle(plan);
     for(var k=0;k<plan.length && qs.length<level.count;k++){
       var q0 = plan[k]==='classify' ? genClassify() : genMath(level, plan[k]);
@@ -389,6 +408,10 @@ function genLevel(level){
     for(var i=0;i<level.count;i++){
       qs.push(genMath(level, pick(level.types)));
     }
+  }
+  /* 数学题随机一半改成"自己写答案"：必须算出结果再打进去，不能靠点选项蒙 */
+  for(var m=0;m<qs.length;m++){
+    if(qs[m].type!=='classify' && rnd(2)===0) qs[m].inputMode = true;
   }
   return qs;
 }
@@ -498,6 +521,7 @@ function renderLevels(){
   var html='<div class="screen"><div class="topbar"><button class="btn ghost" style="width:auto;padding:10px 18px" id="backBtn">← 返回</button><div class="lvl-name">选择关卡</div></div>';
   html+='<div class="levels">';
   for(var i=0;i<LEVELS.length;i++){
+    var sealed = !!LEVELS[i].locked;
     var locked = !isUnlocked(i);
     var st = progress.stars[i]||0;
     var th = TH[LEVELS[i].theme];
@@ -505,6 +529,7 @@ function renderLevels(){
       (locked?'<div class="le">🔒</div>':'<div class="le">'+th.emoji+'</div>')+
       '<div class="n">第 '+(i+1)+' 关</div>'+
       '<div class="t">'+LEVELS[i].name+'</div>'+
+      (sealed?'<div class="t" style="color:#c08040;font-weight:700">还没学除法，下学期再来</div>':'')+
       (locked?'':'<div class="stars">'+starStr(st)+'</div>')+
       '</div>';
   }
@@ -567,17 +592,30 @@ function renderPlay(){
   if(progress.timed){
     html+='<div class="timer"><span class="tnum" id="tnum">'+TIME_LIMIT+'s</span><span class="tbar"><i id="tbar" style="width:100%"></i></span></div>';
   }
-  html+='<div class="qbox"><div class="qctx">'+q.ctx+'</div></div>'+
-    '<div class="opts'+(q.type==='classify'?' txt':'')+'">';
-  for(var i=0;i<q.options.length;i++){
-    html+='<button class="opt" data-v="'+q.options[i]+'">'+q.options[i]+'</button>';
+  html+='<div class="qbox"><div class="qctx">'+q.ctx+'</div></div>';
+  if(q.inputMode){
+    html+='<div class="inputrow"><input id="ansInput" class="ansinput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="自己算出答案，打进这里"><button class="btn gold" id="submitBtn" style="width:auto;padding:16px 24px;white-space:nowrap">提交</button></div>';
+  }else{
+    html+='<div class="opts'+(q.type==='classify'?' txt':'')+'">';
+    for(var i=0;i<q.options.length;i++){
+      html+='<button class="opt" data-v="'+q.options[i]+'">'+q.options[i]+'</button>';
+    }
+    html+='</div>';
   }
-  html+='</div><div class="feedback" id="fb"></div>'+soundBtn()+'</div>';
+  html+='<div class="feedback" id="fb"></div>'+soundBtn()+'</div>';
   app.innerHTML=html;
   document.getElementById('quitBtn').onclick=function(){ clearTimer(); state.screen='levels'; render(); };
   var btns=document.querySelectorAll('.opt');
   for(var k=0;k<btns.length;k++){
     btns[k].onclick=function(){ answer(this.getAttribute('data-v'), this); };
+  }
+  if(q.inputMode){
+    var inEl=document.getElementById('ansInput'), subEl=document.getElementById('submitBtn');
+    subEl.onclick=function(){ answer(inEl.value, null); };
+    inEl.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){ e.preventDefault(); answer(inEl.value, null); }
+    });
+    setTimeout(function(){ try{ inEl.focus(); }catch(e){} }, 120);
   }
   bindSound();
   if(progress.timed) startTimer();
@@ -603,27 +641,56 @@ function answer(v, btn){
   var q = state.questions[state.qIndex];
   var fb = document.getElementById('fb');
   var btns = document.querySelectorAll('.opt');
+  var inp = document.getElementById('ansInput');
+  var isTimeout = (v===null && btn===null);
+  var ok = (!isTimeout && String(v).trim()===q.ans);
+  if(q.tries===undefined) q.tries = 0;
+
+  /* 第一次答错不摊答案，给第二次机会——治"扫一眼就点" */
+  if(!ok && q.tries===0 && !isTimeout){
+    q.tries = 1;
+    addWrong(q);          /* 第一次就错 = 真的没掌握，进错题本回炉 */
+    if(btn) btn.classList.add('wrong');
+    if(inp) inp.classList.add('wrong');
+    fb.textContent = '再想想，还有一次机会';
+    fb.className = 'feedback bad';
+    sndWrong();
+    setTimeout(function(){
+      if(btn) btn.classList.remove('wrong');
+      if(inp){ inp.classList.remove('wrong'); inp.value=''; try{ inp.focus(); }catch(e){} }
+    }, 700);
+    if(progress.timed) startTimer();
+    return;
+  }
+
   state.locked = true;
-  var delay = 1200;                       // 答对：快速进下一题
-  if(v!==null && String(v)===q.ans){
-    state.correct++;
-    state.combo++;
-    if(state.combo>state.maxCombo) state.maxCombo=state.combo;
-    if(state.combo>progress.maxCombo){ progress.maxCombo=state.combo; save(); }
-    if(btn) btn.classList.add('right');
-    var praise = PRAISE[rnd(PRAISE.length)];
-    if(state.combo>=2) praise += '（🔥 '+state.combo+' 连击）';
-    fb.textContent = praise;
+  var delay = 1200;
+  if(ok){
+    if(q.tries===0){
+      state.correct++;
+      state.combo++;
+      if(state.combo>state.maxCombo) state.maxCombo=state.combo;
+      if(state.combo>progress.maxCombo){ progress.maxCombo=state.combo; save(); }
+      var praise = PRAISE[rnd(PRAISE.length)];
+      if(state.combo>=2) praise += '（🔥 '+state.combo+' 连击）';
+      fb.textContent = praise;
+      if(state.combo===2 || state.combo%5===0) comboToast(state.combo);
+      if(state.combo>=10) unlock('combo10');
+      if(state.combo>=20) unlock('combo20');
+    }else{
+      /* 第二次才答对：算他会了，但不计正确分，否则星级虚高 */
+      fb.textContent = '想对了！记住这个：'+q.hint;
+    }
     fb.className='feedback good';
+    if(btn) btn.classList.add('right');
+    if(inp) inp.classList.add('right');
     sndRight();
-    if(state.combo===2 || state.combo%5===0) comboToast(state.combo);
-    if(state.combo>=10) unlock('combo10');
-    if(state.combo>=20) unlock('combo20');
     if(state.isRedo) removeWrong(q);
   }else{
     state.combo = 0;
-    delay = 4000;                          // 答错：留足时间看清正确答案和算式
+    delay = 4000;
     if(btn) btn.classList.add('wrong');
+    if(inp) inp.classList.add('wrong');
     fb.innerHTML = CHEER[rnd(CHEER.length)]+'<br>正确答案：<b>'+q.ans+'</b>'+
       (q.hint ? '<br>'+(q.type==='classify'?'':'算式 ')+q.hint : '');
     fb.className='feedback bad';
@@ -634,6 +701,7 @@ function answer(v, btn){
     }
   }
   for(var k=0;k<btns.length;k++) btns[k].disabled=true;
+  if(inp) inp.disabled = true;
   var bar=document.querySelector('.progress > i');
   if(bar) bar.style.width = Math.round((state.qIndex+1)/state.questions.length*100)+'%';
 
