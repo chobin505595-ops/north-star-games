@@ -104,6 +104,20 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
 .ach-item.locked{opacity:.45}
 .ach-item .ai{font-size:22px}
 @media (max-width:420px){h1{font-size:26px}.qtext{font-size:34px}.opt{font-size:22px}}
+/* 听按钮卡片：整块可点，76px 高 */
+.listen{display:flex;align-items:center;gap:14px;width:100%;min-height:76px;
+  padding:14px 18px;border-radius:16px;text-align:left;cursor:pointer;
+  background:rgba(47,125,82,.07);border:2px solid rgba(47,125,82,.28);
+  transition:transform .15s;font-family:inherit;-webkit-tap-highlight-color:transparent;
+  margin-top:14px}
+.listen:active{transform:scale(.98)}
+.listen .li{font-size:28px;line-height:1;flex:0 0 auto}
+.listen .lt{flex:1;min-width:0}
+.listen b{display:block;font-size:17px;font-weight:800;color:#1D5C39;line-height:1.3}
+.listen em{display:block;font-style:normal;font-size:12.5px;color:#5F584C;
+  margin-top:3px;line-height:1.4}
+.listen.off{background:#F4F1EC;border-color:#E4DCD0;cursor:default}
+.listen.off b{color:#5F584C}
 </style>
 </head>
 <body>
@@ -444,7 +458,8 @@ function renderPlay(){
   if(progress.timed){
     html+='<div class="timer"><span class="tnum" id="tnum">15s</span><span class="tbar"><i id="tbar" style="width:100%"></i></span></div>';
   }
-  html+='<div class="qbox"><div class="qctx">'+q.ctx+'</div><div class="qtext">'+q.a+' × '+q.b+' = ?</div></div>'+
+  html+='<div class="qbox"><div class="qctx">'+q.ctx+'</div><div class="qtext">'+q.a+' × '+q.b+' = ?</div>'
+    +listenCard()+'</div>'+
     '<div class="opts">';
   for(var i=0;i<q.options.length;i++){
     html+='<button class="opt" data-v="'+q.options[i]+'">'+q.options[i]+'</button>';
@@ -452,6 +467,8 @@ function renderPlay(){
   html+='</div><div class="feedback" id="fb"></div>'+soundBtn()+'</div>';
   app.innerHTML=html;
   document.getElementById('quitBtn').onclick=function(){ clearTimer(); state.screen='levels'; render(); };
+  var lc=document.getElementById('speakQBtn');
+  if(lc) lc.onclick=function(){ speakMath(plainText(q.ctx).replace(/[？?]$/,'')+'，'+q.a+' 乘 '+q.b+' 等于几'); };
   var btns=document.querySelectorAll('.opt');
   for(var k=0;k<btns.length;k++){
     btns[k].onclick=function(){ answer(+this.getAttribute('data-v'), this); };
@@ -634,6 +651,23 @@ function goNextUnplayed(){
 }
 
 /* ===== 声音开关 ===== */
+/* ---------- 念题（语音朗读） ---------- */
+var TTS_OK = (typeof window.speechSynthesis !== 'undefined') && (typeof window.SpeechSynthesisUtterance !== 'undefined');
+function plainText(s){ return String(s||'').replace(/<[^>]+>/g,''); }
+function speakMath(t){
+  if(!TTS_OK) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(plainText(t));
+    u.lang='zh-CN'; u.rate=0.9;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function listenCard(){
+  if(!TTS_OK) return '<div class="listen off"><span class="li">🔇</span><span class="lt"><b>让爸爸妈妈念给你听</b><em>这个浏览器不能自动朗读</em></span></div>';
+  return '<button class="listen" id="speakQBtn"><span class="li">🔊</span><span class="lt"><b>念题</b><em>读不懂的字可以听</em></span></button>';
+}
+
 function soundBtn(){
   var icon;
   if(progress.soundOn){
