@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2E9E5B">
+<title>语文 · 北极星学习屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23E8834A'/%3E%3Ctext x='50' y='72' font-size='56' text-anchor='middle'%3E%F0%9F%93%96%3C/text%3E%3C/svg%3E">
+<style>
+:root{--green:#2E9E5B;--green-dark:#1F7A45;--green-deep:#173B2A;--orange:#E8834A;--orange-dark:#C4692F;
+  --yellow:#FFC53D;--red:#E85D5D;--bg1:#FDF3EC;--bg2:#FAE8DC;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--green-deep);
+  min-height:100vh;padding:16px;display:flex;justify-content:center}
+#app{width:100%;max-width:560px}
+.card{background:#fff;border-radius:26px;box-shadow:0 10px 30px rgba(120,70,30,.12);padding:22px 20px}
+h1{font-size:24px;font-weight:900;text-align:center}
+.sub{text-align:center;color:#8a7361;font-size:14px;margin-top:6px}
+.tabs{display:flex;gap:8px;margin:16px 0 4px;background:#f6ece4;border-radius:16px;padding:5px}
+.tab{flex:1;text-align:center;padding:11px;border-radius:12px;font-weight:800;font-size:15px;
+  color:#8a7361;cursor:pointer;transition:.15s}
+.tab.on{background:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(232,131,74,.35)}
+.modes{display:flex;gap:8px;margin:14px 0}
+.mode{flex:1;text-align:center;padding:10px 4px;border-radius:12px;border:2px solid #ecdfd4;
+  font-size:13px;font-weight:700;color:#8a7361;cursor:pointer;background:#fff}
+.mode.on{border-color:var(--orange);color:var(--orange-dark);background:#fdf3ec}
+.btn{display:block;width:100%;border:none;cursor:pointer;font-family:inherit;font-weight:800;
+  border-radius:16px;font-size:17px;padding:16px;color:#fff;background:var(--orange);min-height:54px;
+  box-shadow:0 5px 0 var(--orange-dark);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--orange-dark)}
+.btn.ghost{background:#f8efe8;color:var(--orange-dark);box-shadow:0 5px 0 #e8dbd0}
+.btn.ghost:active{box-shadow:0 2px 0 #e8dbd0}
+.btn.green{background:var(--green);box-shadow:0 5px 0 var(--green-dark)}
+.btn.green:active{box-shadow:0 2px 0 var(--green-dark)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.mt10{margin-top:10px}.mt16{margin-top:16px}
+.prog{height:10px;background:#f2e6dc;border-radius:6px;overflow:hidden;margin:6px 0 16px}
+.prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),#f0a878);transition:width .3s}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:#8a7361}
+.pinyin{text-align:center;font-size:34px;font-weight:800;letter-spacing:2px;color:var(--orange-dark);
+  padding:30px 10px;line-height:1.5;word-break:break-word}
+.pinyin.small{font-size:24px;padding:18px 8px}
+.answer{text-align:center;font-size:40px;font-weight:900;letter-spacing:6px;padding:14px 0;
+  color:var(--green-deep);animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.answer.hidden{color:#d9cdc3;font-size:22px;letter-spacing:2px;font-weight:700}
+.qbox{background:#fdf8f4;border-radius:20px;padding:10px 14px;margin-bottom:14px;min-height:130px;
+  display:flex;flex-direction:column;justify-content:center}
+.inputrow{display:flex;gap:10px}
+.chin{flex:1;border:3px solid #ecdfd4;border-radius:16px;font-size:26px;font-weight:800;text-align:center;
+  font-family:inherit;color:var(--green-deep);padding:14px;outline:none;background:#fff;-webkit-appearance:none}
+.chin:focus{border-color:var(--orange)}
+.chin.right{border-color:var(--green);background:#eef8f1}
+.chin.wrong{border-color:var(--red);background:#fdeeee}
+.fb{text-align:center;font-size:16px;font-weight:800;min-height:26px;margin-top:10px;line-height:1.5}
+.fb.good{color:var(--green-dark)}.fb.bad{color:var(--red)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.scoreline{text-align:center;font-size:19px;font-weight:800;margin:10px 0}
+.wronglist{background:#fdf8f4;border-radius:16px;padding:14px;margin-top:14px;font-size:15px;line-height:2}
+.wronglist b{color:var(--red)}
+.lesson{background:#fff;border:2px solid #ecdfd4;border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.lesson h3{font-size:17px;margin-bottom:4px}
+.lesson .meta{font-size:13px;color:#8a7361;margin-bottom:10px}
+.chars{display:flex;flex-wrap:wrap;gap:8px}
+.ch{background:#fdf3ec;border-radius:10px;padding:8px 10px;text-align:center;min-width:56px;cursor:pointer}
+.ch .z{font-size:22px;font-weight:800;line-height:1.1}
+.ch .p{font-size:11px;color:var(--orange-dark);margin-top:2px}
+.ch .c{font-size:11px;color:#8a7361;margin-top:2px;display:none}
+.ch.open .c{display:block}
+.tip{font-size:13px;color:#a89483;text-align:center;margin-top:12px;line-height:1.7}
+.note{background:#fff8e8;border-left:4px solid var(--yellow);border-radius:10px;padding:12px 14px;
+  font-size:13.5px;line-height:1.8;color:#7a6448;margin-top:12px}
+.speak{font-size:15px;padding:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============================================================
+   语文 · 北极星学习屋
+   内容来源：统编版二年级上册 第二单元（识字1-4）写字表
+   ============================================================ */
+
+/* 写字表 40 字 + 教材配套组词（每课覆盖本课全部写字） */
+var LESSONS = [
+  { name:'识字1 场景歌', chars:'处园桥群队旗铜号领巾', words:[
+    {w:'到处', p:'dào chù'}, {w:'花园', p:'huā yuán'}, {w:'石桥', p:'shí qiáo'},
+    {w:'羊群', p:'yáng qún'}, {w:'队旗', p:'duì qí'}, {w:'铜号', p:'tóng hào'},
+    {w:'红领巾', p:'hóng lǐng jīn'}
+  ]},
+  { name:'识字2 树之歌', chars:'杨壮桐枫松柏棉杉化桂', words:[
+    {w:'杨树', p:'yáng shù'}, {w:'壮大', p:'zhuàng dà'}, {w:'梧桐', p:'wú tóng'},
+    {w:'枫叶', p:'fēng yè'}, {w:'松柏', p:'sōng bǎi'}, {w:'棉花', p:'mián huā'},
+    {w:'水杉', p:'shuǐ shān'}, {w:'变化', p:'biàn huà'}, {w:'桂花', p:'guì huā'}
+  ]},
+  { name:'识字3 拍手歌', chars:'歌写丛深六熊猫九朋友', words:[
+    {w:'唱歌', p:'chàng gē'}, {w:'写字', p:'xiě zì'}, {w:'丛林', p:'cóng lín'},
+    {w:'深处', p:'shēn chù'}, {w:'六个', p:'liù gè'}, {w:'熊猫', p:'xióng māo'},
+    {w:'九个', p:'jiǔ gè'}, {w:'朋友', p:'péng yǒu'}
+  ]},
+  { name:'识字4 田家四季歌', chars:'季吹肥农忙归戴辛苦年', words:[
+    {w:'四季', p:'sì jì'}, {w:'春风吹', p:'chūn fēng chuī'}, {w:'化肥', p:'huà féi'},
+    {w:'农民', p:'nóng mín'}, {w:'帮忙', p:'bāng máng'}, {w:'归来', p:'guī lái'},
+    {w:'穿戴', p:'chuān dài'}, {w:'辛苦', p:'xīn kǔ'}, {w:'新年', p:'xīn nián'}
+  ]}
+];
+
+/* 每个字的拼音（点字看） */
+var PINYIN = {
+  '处':'chù','园':'yuán','桥':'qiáo','群':'qún','队':'duì','旗':'qí','铜':'tóng','号':'hào','领':'lǐng','巾':'jīn',
+  '杨':'yáng','壮':'zhuàng','桐':'tóng','枫':'fēng','松':'sōng','柏':'bǎi','棉':'mián','杉':'shān','化':'huà','桂':'guì',
+  '歌':'gē','写':'xiě','丛':'cóng','深':'shēn','六':'liù','熊':'xióng','猫':'māo','九':'jiǔ','朋':'péng','友':'yǒu',
+  '季':'jì','吹':'chuī','肥':'féi','农':'nóng','忙':'máng','归':'guī','戴':'dài','辛':'xīn','苦':'kǔ','年':'nián'
+};
+
+/* 每个字对应的组词（点字看） */
+var CHARWORD = {};
+LESSONS.forEach(function(L){
+  L.words.forEach(function(o){
+    for (var i=0;i<o.w.length;i++){
+      var ch = o.w[i];
+      if (PINYIN[ch] && !CHARWORD[ch]) CHARWORD[ch] = o.w;
+    }
+  });
+});
+
+var STORE = 'polestar-chinese-v1';
+var store = {seen:{}, wrong:{}};
+try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) store = Object.assign(store, s); } catch(e){}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(store)); }catch(e){} }
+
+/* 汇总题池 */
+var POOL = [];
+LESSONS.forEach(function(L){
+  L.words.forEach(function(o){ POOL.push({w:o.w, p:o.p, lesson:L.name}); });
+});
+
+var TTS_OK = (typeof window.speechSynthesis !== 'undefined') && (typeof window.SpeechSynthesisUtterance !== 'undefined');
+
+var state = { tab:'daily', mode:'paper', queue:[], idx:0, right:0, misses:[], revealed:false, done:false };
+/* 支持首页带 #study / #daily 直接进对应入口 */
+(function(){ var h=(location.hash||'').replace('#',''); if(h==='daily'||h==='study') state.tab=h; })();
+
+var app = document.getElementById('app');
+function rnd(n){ return Math.floor(Math.random()*n); }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){var j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+var MODE_NAME = {paper:'纸上写', type:'打字', voice:'听写'};
+
+function render(){
+  if (state.tab==='daily') renderDaily(); else renderStudy();
+}
+
+/* ---------- 日常练习 ---------- */
+function renderDaily(){
+  var html = '<div class="card">'
+    + '<h1>📖 语文 · 日常练习</h1>'
+    + '<p class="sub">二年级上册 第二单元 写字表 · 34 个词</p>'
+    + '<div class="tabs">'
+    +   '<div class="tab '+(state.tab==='daily'?'on':'')+'" data-tab="daily">日常练习</div>'
+    +   '<div class="tab" data-tab="study">学业入口</div>'
+    + '</div>';
+
+  if (state.done) { html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
+
+  if (state.queue.length===0){
+    html += '<div class="modes">'
+      + '<div class="mode '+(state.mode==='paper'?'on':'')+'" data-mode="paper">✏️ 纸上写<div style="font-size:11px;margin-top:2px">看拼音，纸上写</div></div>'
+      + '<div class="mode '+(state.mode==='type'?'on':'')+'" data-mode="type">⌨️ 打字<div style="font-size:11px;margin-top:2px">输汉字自动批</div></div>'
+      + '<div class="mode '+(state.mode==='voice'?'on':'')+'" data-mode="voice">🔊 听写<div style="font-size:11px;margin-top:2px">念给你听</div></div>'
+      + '</div>';
+    if (state.mode==='voice' && !TTS_OK){
+      html += '<div class="note">这个浏览器不支持自动朗读，让爸爸妈妈照着拼音念给他听就行。</div>';
+    }
+    html += '<button class="btn mt16" id="startBtn">开始（10 个词）</button>'
+      + '<button class="btn ghost mt10" id="startAllBtn">全单元 34 个词都过一遍</button>'
+      + '<button class="btn ghost mt10" id="wrongBtn">只练错过的词（'+Object.keys(store.wrong).length+'）</button>'
+      + '<p class="tip">每次抽查 10 个，混着三课四课出，练完记下错词下次优先出</p>'
+      + '</div>';
+    app.innerHTML = html;
+    bindBase();
+    document.querySelectorAll('.mode').forEach(function(m){
+      m.onclick = function(){ state.mode = m.dataset.mode; render(); };
+    });
+    document.getElementById('startBtn').onclick = function(){ startRound(10, POOL); };
+    document.getElementById('startAllBtn').onclick = function(){ startRound(POOL.length, POOL); };
+    var wb = document.getElementById('wrongBtn');
+    if (Object.keys(store.wrong).length===0){ wb.disabled = true; wb.textContent = '还没有错过词，真棒'; }
+    else wb.onclick = function(){
+      var list = Object.keys(store.wrong).map(function(w){
+        var found = null;
+        POOL.forEach(function(o){ if(o.w===w) found = o; });
+        return found;
+      }).filter(Boolean);
+      startRound(list.length, list);
+    };
+    return;
+  }
+
+  /* 答题中 */
+  var q = state.queue[state.idx];
+  var pct = Math.round(state.idx / state.queue.length * 100);
+  html += '<div class="topbar"><span>'+MODE_NAME[state.mode]+' · 第 '+(state.idx+1)+' / '+state.queue.length+' 个</span>'
+    + '<span>对 '+state.right+'</span></div>'
+    + '<div class="prog"><i style="width:'+pct+'%"></i></div>';
+
+  if (state.mode==='voice' && !state.revealed){
+    html += '<div class="qbox"><button class="btn ghost speak" id="speakBtn">🔊 点这里念给我听</button>'
+      + '<p class="tip" style="margin-top:10px">听清了就在纸上写，写完点下面</p></div>';
+  } else {
+    var cls = state.mode==='paper' ? '' : ' small';
+    html += '<div class="qbox"><div class="pinyin'+cls+'">'+q.p+'</div></div>';
+  }
+
+  if (state.mode==='type' && !state.revealed){
+    html += '<div class="inputrow"><input id="chin" class="chin" type="text" autocomplete="off" placeholder="写汉字">'
+      + '<button class="btn green" id="subBtn" style="width:auto;padding:14px 22px;white-space:nowrap">提交</button></div>';
+  }
+
+  html += '<div class="fb" id="fb"></div>';
+
+  if (state.revealed){
+    html += '<div class="answer">'+q.w+'</div>'
+      + '<div class="row2">'
+      + '<button class="btn ghost" id="wrongBtn2">写错了</button>'
+      + '<button class="btn green" id="rightBtn">写对了</button>'
+      + '</div>';
+  } else if (state.mode!=='type'){
+    html += '<button class="btn mt16" id="revealBtn">写好了，看答案</button>';
+  }
+
+  html += '<button class="btn ghost mt10" id="quitBtn">退出</button></div>';
+  app.innerHTML = html;
+  bindBase();
+
+  var sb = document.getElementById('speakBtn');
+  if (sb) sb.onclick = function(){ speakWord(q.w); };
+
+  var sub = document.getElementById('subBtn');
+  if (sub){
+    var inp = document.getElementById('chin');
+    var fbEl = document.getElementById('fb');
+    var submit = function(){
+      var v = (inp.value||'').trim();
+      if (!v) return;
+      if (v === q.w){
+        inp.classList.add('right'); inp.disabled = true;
+        fbEl.textContent = '对了！'+q.w+'（'+q.p+'）';
+        fbEl.className = 'fb good';
+        state.right++;
+        delete store.wrong[q.w];
+        store.seen[q.w] = (store.seen[q.w]||0)+1;
+        save();
+        setTimeout(nextQ, 900);
+      } else if (!q.tried){
+        q.tried = true;
+        inp.classList.add('wrong');
+        fbEl.textContent = '再想想，还有一次机会';
+        fbEl.className = 'fb bad';
+        setTimeout(function(){
+          inp.classList.remove('wrong'); inp.value='';
+          try{ inp.focus(); }catch(e){}
+        }, 700);
+      } else {
+        inp.classList.add('wrong'); inp.disabled = true;
+        fbEl.innerHTML = '正确答案：<b>'+q.w+'</b>　'+q.p;
+        fbEl.className = 'fb bad';
+        state.misses.push(q.w); store.wrong[q.w] = true; save();
+        setTimeout(nextQ, 2200);
+      }
+    };
+    sub.onclick = submit;
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+    setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 100);
+  }
+
+  var rb = document.getElementById('revealBtn');
+  if (rb) rb.onclick = function(){ state.revealed = true; render(); };
+
+  var ok = document.getElementById('rightBtn');
+  if (ok) ok.onclick = function(){ judge(true); };
+  var no = document.getElementById('wrongBtn2');
+  if (no) no.onclick = function(){ judge(false); };
+
+  document.getElementById('quitBtn').onclick = function(){ state.queue = []; state.done = false; render(); };
+}
+
+function judge(ok){
+  var q = state.queue[state.idx];
+  if (ok){ state.right++; delete store.wrong[q.w]; }
+  else { state.misses.push(q.w); store.wrong[q.w] = true; }
+  store.seen[q.w] = (store.seen[q.w]||0) + 1;
+  save();
+  nextQ();
+}
+
+function nextQ(){
+  state.idx++;
+  state.revealed = false;
+  if (state.idx >= state.queue.length) state.done = true;
+  render();
+}
+
+function renderResult(){
+  var total = state.queue.length;
+  var r = state.right;
+  var stars = r===total ? '★★★' : (r>=total*0.8 ? '★★' : (r>=total*0.6 ? '★' : '再来一次'));
+  var html = '<div class="scoreline" style="font-size:42px;margin:16px 0 4px">'+stars+'</div>'
+    + '<div class="scoreline">写对 '+r+' / '+total+' 个</div>';
+  if (state.misses.length){
+    html += '<div class="wronglist"><b>这几个要重点练：</b><br>'+state.misses.join('、')+'</div>';
+  } else {
+    html += '<p class="tip" style="color:var(--green-dark);font-weight:800;font-size:16px">全对！一个都没错，厉害！</p>';
+  }
+  html += '<button class="btn mt16" id="againBtn">再练一次</button>'
+    + '<button class="btn ghost mt10" id="backBtn">回首页</button>';
+  return html;
+}
+
+function startRound(n, pool){
+  var words = pool.slice();
+  /* 错过的词优先混进前几个 */
+  var wrongList = Object.keys(store.wrong);
+  if (wrongList.length){
+    var extra = words.filter(function(o){ return store.wrong[o.w]; });
+    var rest = words.filter(function(o){ return !store.wrong[o.w]; });
+    words = shuffle(extra.concat(shuffle(rest)));
+  } else {
+    words = shuffle(words);
+  }
+  state.queue = words.slice(0, Math.min(n, words.length));
+  state.idx = 0; state.right = 0; state.misses = []; state.revealed = false; state.done = false;
+  render();
+}
+
+function speakWord(w){
+  if (!TTS_OK) return;
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(w);
+    u.lang = 'zh-CN'; u.rate = 0.8; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+/* ---------- 学业入口 ---------- */
+function renderStudy(){
+  var html = '<div class="card">'
+    + '<h1>📖 语文 · 学业入口</h1>'
+    + '<p class="sub">统编版二年级上册 · 第二单元（识字 1-4）</p>'
+    + '<div class="tabs">'
+    +   '<div class="tab" data-tab="daily">日常练习</div>'
+    +   '<div class="tab '+(state.tab==='study'?'on':'')+'" data-tab="study">学业入口</div>'
+    + '</div>';
+
+  LESSONS.forEach(function(L, i){
+    html += '<div class="lesson"><h3>'+L.name+'</h3>'
+      + '<div class="meta">写字表 '+L.chars.length+' 个字 · 点字看组词</div><div class="chars">';
+    L.chars.split('').forEach(function(c){
+      html += '<div class="ch" data-c="'+c+'"><div class="z">'+c+'</div>'
+        + '<div class="p">'+(PINYIN[c]||'')+'</div>'
+        + '<div class="c">'+(CHARWORD[c]||'')+'</div></div>';
+    });
+    html += '</div></div>';
+  });
+
+  html += '<div class="note"><b>下周听写这么排</b><br>'
+    + '· 周六：场景歌 + 树之歌（20 字）<br>'
+    + '· 周日：拍手歌 + 田家四季歌（20 字）+ 回听周六的错字<br>'
+    + '· 一次 15 分钟，错字重写 3 遍，隔天再听这一批，不罚抄</div>'
+    + '<div class="note"><b>必错的盯这几个</b><br>'
+    + '戴（17 画）· 群（右边是「君」）· 旗（方+其）· 熊（四点底）<br>'
+    + '木字旁八个容易串：杨 桐 枫 松 柏 棉 杉 桂<br>'
+    + '形近字：棉/绵 · 杨/扬 · 柏/伯 · 杉/衫 · 园/圆 · 丛/从 · 辛/幸 · 季/李</div>'
+    + '<div class="note" style="border-left-color:#bbb">《数九歌》《十二月花名歌》在语文园地二，只背不写</div>'
+    + '<p class="tip">生字表来自教材写字表。课本第 16-24 页的田字格可以再对一眼</p></div>';
+
+  app.innerHTML = html;
+  bindBase();
+  document.querySelectorAll('.ch').forEach(function(el){
+    el.onclick = function(){ el.classList.toggle('open'); };
+  });
+}
+
+function bindBase(){
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.onclick = function(){
+      state.tab = t.dataset.tab;
+      if (state.tab!=='daily'){ state.queue = []; state.done = false; }
+      render();
+    };
+  });
+  var ag = document.getElementById('againBtn');
+  if (ag) ag.onclick = function(){ startRound(10, POOL); };
+  var bk = document.getElementById('backBtn');
+  if (bk) bk.onclick = function(){ state.queue = []; state.done = false; render(); };
+}
+
+render();
+</script>
+</body>
+</html>

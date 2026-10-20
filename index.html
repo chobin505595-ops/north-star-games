@@ -6,37 +6,84 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#2E9E5B">
-<title>绿鳄王游戏屋</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232E9E5B'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle'%3E%F0%9F%90%9C%3C/text%3E%3C/svg%3E">
+<title>北极星学习屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232E9E5B'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
 <style>
-:root{--green:#2E9E5B;--green-dark:#1F7A45;--green-deep:#173B2A;--yellow:#FFC53D;--orange:#FF8A3D;}
+:root{--green:#2E9E5B;--green-dark:#1F7A45;--orange:#E8834A;--orange-dark:#C4692F;
+  --blue:#4A7BE8;--blue-dark:#2F5CC4;--ink:#173B2A;--bg1:#F7F4EE;--bg2:#EAE4D9;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
-  background:linear-gradient(160deg,#EAF7EF,#DDF0E4);color:var(--green-deep);min-height:100vh;
-  display:flex;align-items:center;justify-content:center;padding:20px}
-.wrap{width:100%;max-width:520px}
-.card{background:#fff;border-radius:28px;box-shadow:0 10px 30px rgba(23,59,42,.12);padding:28px 24px;
-  animation:pop .35s ease}
-@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
-h1{font-size:28px;font-weight:900;text-align:center}
-.sub{text-align:center;color:#5a7a68;font-size:15px;margin-top:8px;line-height:1.6}
-a.btn{display:block;text-decoration:none;text-align:center;border-radius:18px;font-weight:800;
-  font-size:19px;padding:18px;color:#fff;background:var(--green);margin-top:16px;
-  box-shadow:0 6px 0 var(--green-dark);transition:transform .1s}
-a.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--green-dark)}
-a.btn .t{font-size:12px;font-weight:600;opacity:.92;display:block;margin-top:3px}
-a.btn.s2{background:var(--orange);box-shadow:0 6px 0 #cf6a24}
-a.btn.s2:active{box-shadow:0 2px 0 #cf6a24}
-.tip{margin-top:18px;font-size:13px;color:#6b8a79;line-height:1.7;text-align:center}
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);
+  min-height:100vh;display:flex;justify-content:center;padding:20px 16px}
+.wrap{width:100%;max-width:540px}
+.head{text-align:center;margin-bottom:22px}
+h1{font-size:27px;font-weight:900;letter-spacing:1px}
+.sub{color:#7d7364;font-size:14px;margin-top:7px;line-height:1.6}
+.subject{background:#fff;border-radius:24px;padding:18px 18px 16px;margin-bottom:14px;
+  box-shadow:0 8px 24px rgba(60,50,30,.10);border-left:7px solid var(--green)}
+.subject.zh{border-left-color:var(--orange)}
+.subject.en{border-left-color:var(--blue)}
+.shead{display:flex;align-items:center;gap:11px}
+.ico{font-size:30px;line-height:1}
+.sname{font-size:20px;font-weight:900}
+.sdesc{font-size:12.5px;color:#8d8271;margin-top:2px}
+.entries{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+a.entry{display:block;text-decoration:none;border-radius:14px;padding:13px 10px;text-align:center;
+  font-weight:800;font-size:15px;color:#fff;background:var(--green);
+  box-shadow:0 4px 0 var(--green-dark);transition:transform .1s}
+a.entry:active{transform:translateY(3px);box-shadow:0 1px 0 var(--green-dark)}
+a.entry .t{display:block;font-size:11.5px;font-weight:600;opacity:.92;margin-top:3px}
+a.entry.study{background:#7fbf9a;box-shadow:0 4px 0 #5c9b78}
+a.entry.study:active{box-shadow:0 1px 0 #5c9b78}
+.zh a.entry{background:var(--orange);box-shadow:0 4px 0 var(--orange-dark)}
+.zh a.entry:active{box-shadow:0 1px 0 var(--orange-dark)}
+.zh a.entry.study{background:#efab84;box-shadow:0 4px 0 #c98a63}
+.zh a.entry.study:active{box-shadow:0 1px 0 #c98a63}
+.en a.entry{background:var(--blue);box-shadow:0 4px 0 var(--blue-dark)}
+.en a.entry:active{box-shadow:0 1px 0 var(--blue-dark)}
+.en a.entry.study{background:#8aa6ef;box-shadow:0 4px 0 #6285d4}
+.en a.entry.study:active{box-shadow:0 1px 0 #6285d4}
+footer{text-align:center;font-size:12.5px;color:#9a9080;margin-top:20px;line-height:1.9}
 </style>
 </head>
 <body>
-<div class="wrap"><div class="card">
-  <h1>🐊 绿鳄王游戏屋</h1>
-  <p class="sub">点一下就玩 · 打开时需要联网（建议用 Wi-Fi）<br>进度会自动存在手机上，下次接着玩</p>
-  <a class="btn" href="season1.html">第一季 · 乘法口诀大冒险<span class="t">2~9 的口诀，9 关闯关 · 建议先玩这季</span></a>
-  <a class="btn s2" href="season2.html">第二季 · 虫虫大冒险<span class="t">应用题 · 一半的题要自己写答案，答错有一次重来</span></a>
-  <p class="tip">第二季第 2、3 关是除法，还没学到，先锁着<br>想放到手机桌面：用 Safari 打开本页 → 分享 → 「添加到主屏幕」</p>
-</div></div>
+<div class="wrap">
+  <div class="head">
+    <h1>⭐ 北极星学习屋</h1>
+    <p class="sub">阿宝，每天挑一个练<br>日常练习刷基本功，学业入口跟课本走</p>
+  </div>
+
+  <div class="subject">
+    <div class="shead"><span class="ico">🐊</span>
+      <div><div class="sname">数学</div><div class="sdesc">口诀 · 应用题 · 进退位</div></div>
+    </div>
+    <div class="entries">
+      <a class="entry" href="season1.html">日常练习<span class="t">口诀闯关</span></a>
+      <a class="entry study" href="season2.html">学业入口<span class="t">应用题</span></a>
+    </div>
+  </div>
+
+  <div class="subject zh">
+    <div class="shead"><span class="ico">📖</span>
+      <div><div class="sname">语文</div><div class="sdesc">生字听写 · 看拼音写词语</div></div>
+    </div>
+    <div class="entries">
+      <a class="entry" href="chinese.html#daily">日常练习<span class="t">写字表 40 字</span></a>
+      <a class="entry study" href="chinese.html#study">学业入口<span class="t">单元 + 听写单</span></a>
+    </div>
+  </div>
+
+  <div class="subject en">
+    <div class="shead"><span class="ico">🔤</span>
+      <div><div class="sname">英语</div><div class="sdesc">单词闪卡 · 听音</div></div>
+    </div>
+    <div class="entries">
+      <a class="entry" href="english.html#daily">日常练习<span class="t">Unit 2 单词</span></a>
+      <a class="entry study" href="english.html#study">学业入口<span class="t">六个单元</span></a>
+    </div>
+  </div>
+
+  <footer>想放到手机桌面：Safari 打开 → 分享 → 添加到主屏幕<br>进度存在这台设备上，换设备要重新攒</footer>
+</div>
 </body>
 </html>

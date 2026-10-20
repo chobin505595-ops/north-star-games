@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#4A7BE8">
+<title>英语 · 北极星学习屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%234A7BE8'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%F0%9F%94%A4%3C/text%3E%3C/svg%3E">
+<style>
+:root{--blue:#4A7BE8;--blue-dark:#2F5CC4;--ink:#1B2A4A;--green:#2E9E5B;--red:#E85D5D;
+  --yellow:#FFC53D;--bg1:#EEF3FE;--bg2:#E2EAFB;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);
+  min-height:100vh;padding:16px;display:flex;justify-content:center}
+#app{width:100%;max-width:560px}
+.card{background:#fff;border-radius:26px;box-shadow:0 10px 30px rgba(40,70,140,.12);padding:22px 20px}
+h1{font-size:24px;font-weight:900;text-align:center}
+.sub{text-align:center;color:#6b7c9c;font-size:14px;margin-top:6px}
+.tabs{display:flex;gap:8px;margin:16px 0 4px;background:#eaf0fc;border-radius:16px;padding:5px}
+.tab{flex:1;text-align:center;padding:11px;border-radius:12px;font-weight:800;font-size:15px;
+  color:#6b7c9c;cursor:pointer;transition:.15s}
+.tab.on{background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(74,123,232,.35)}
+.modes{display:flex;gap:8px;margin:14px 0}
+.mode{flex:1;text-align:center;padding:10px 4px;border-radius:12px;border:2px solid #dde6f8;
+  font-size:13px;font-weight:700;color:#6b7c9c;cursor:pointer;background:#fff}
+.mode.on{border-color:var(--blue);color:var(--blue-dark);background:#eef3fe}
+.mode.off{opacity:.4;cursor:not-allowed}
+.btn{display:block;width:100%;border:none;cursor:pointer;font-family:inherit;font-weight:800;
+  border-radius:16px;font-size:17px;padding:16px;color:#fff;background:var(--blue);min-height:54px;
+  box-shadow:0 5px 0 var(--blue-dark);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--blue-dark)}
+.btn.ghost{background:#f0f4fd;color:var(--blue-dark);box-shadow:0 5px 0 #dbe4f6}
+.btn.ghost:active{box-shadow:0 2px 0 #dbe4f6}
+.btn.green{background:var(--green);box-shadow:0 5px 0 #1F7A45}
+.btn.green:active{box-shadow:0 2px 0 #1F7A45}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.mt10{margin-top:10px}.mt16{margin-top:16px}
+.prog{height:10px;background:#e8eefb;border-radius:6px;overflow:hidden;margin:6px 0 16px}
+.prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#88a8f0);transition:width .3s}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:#6b7c9c}
+/* 闪卡 */
+.flash{background:linear-gradient(160deg,#f4f8ff,#e7eefd);border-radius:22px;padding:34px 20px;
+  text-align:center;min-height:230px;display:flex;flex-direction:column;justify-content:center;
+  cursor:pointer;border:2px dashed #c9d8f5;transition:.2s}
+.flash:active{transform:scale(.985)}
+.flash .emo{font-size:56px;line-height:1}
+.flash .cn{font-size:30px;font-weight:900;margin-top:12px}
+.flash .en{font-size:36px;font-weight:900;color:var(--blue-dark);letter-spacing:1px;margin-top:12px;
+  animation:pop .25s ease}
+.flash .ph{font-size:15px;color:#7b8cae;margin-top:8px}
+.flash .hint{font-size:13px;color:#9aa8c4;margin-top:16px}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+/* 选择题 */
+.opt{display:block;width:100%;border:3px solid #dde6f8;background:#fff;border-radius:16px;
+  font-size:20px;font-weight:800;padding:16px;cursor:pointer;font-family:inherit;color:var(--ink);
+  margin-bottom:10px;transition:.15s}
+.opt:active{transform:scale(.98)}
+.opt.right{background:var(--green);border-color:var(--green);color:#fff}
+.opt.wrong{background:var(--red);border-color:var(--red);color:#fff}
+.opt.show{background:var(--green);border-color:var(--green);color:#fff}
+.fb{text-align:center;font-size:16px;font-weight:800;min-height:26px;margin-top:10px}
+.fb.good{color:#1F7A45}.fb.bad{color:var(--red)}
+.scoreline{text-align:center;font-size:19px;font-weight:800;margin:10px 0}
+.wronglist{background:#f4f8ff;border-radius:16px;padding:14px;margin-top:14px;font-size:15px;line-height:2}
+.wronglist b{color:var(--red)}
+.unit{background:#fff;border:2px solid #dde6f8;border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.unit h3{font-size:17px}
+.unit .meta{font-size:13px;color:#6b7c9c;margin-top:3px}
+.unit.off{opacity:.5}
+.unit.off h3{color:#9aa8c4}
+.tip{font-size:13px;color:#9aa8c4;text-align:center;margin-top:12px;line-height:1.7}
+.note{background:#fff8e8;border-left:4px solid var(--yellow);border-radius:10px;padding:12px 14px;
+  font-size:13.5px;line-height:1.8;color:#7a6448;margin-top:12px}
+.wordlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.wchip{background:#f4f8ff;border-radius:12px;padding:9px 12px;text-align:center;min-width:76px;cursor:pointer}
+.wchip .e{font-size:15px;font-weight:900;color:var(--blue-dark)}
+.wchip .c{font-size:12px;color:#6b7c9c;margin-top:2px}
+.wchip .emo{font-size:18px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============================================================
+   英语 · 北极星学习屋
+   内容来源：外研社《新交际英语》二年级上册（外研福建版，主编罗少茜）
+   Unit 2 Yummy, yummy food! 单词表
+   ============================================================ */
+
+var UNITS = [
+  {u:1, title:'Feelings',            cn:'情绪',   open:false},
+  {u:2, title:'Yummy, yummy food!',  cn:'食物',   open:true},
+  {u:3, title:'Weather',             cn:'天气',   open:false},
+  {u:4, title:'Seasons',             cn:'季节',   open:false},
+  {u:5, title:'Clothes',             cn:'衣服',   open:false},
+  {u:6, title:'Happy holiday!',      cn:'节日',   open:false}
+];
+
+/* Unit 2 词表（教材配套词表） */
+var WORDS_U2 = [
+  {e:'eat',       c:'吃',        emo:'🍽️'},
+  {e:'banana',    c:'香蕉',      emo:'🍌'},
+  {e:'yummy',     c:'美味的',    emo:'😋'},
+  {e:'rice',      c:'米饭',      emo:'🍚'},
+  {e:'noodle',    c:'面条',      emo:'🍜'},
+  {e:'milk',      c:'牛奶',      emo:'🥛'},
+  {e:'bread',     c:'面包',      emo:'🍞'},
+  {e:'like',      c:'喜欢',      emo:'❤️'},
+  {e:'but',       c:'但是',      emo:'↔️'},
+  {e:'food',      c:'食物',      emo:'🍱'},
+  {e:'us',        c:'我们',      emo:'👨‍👩‍👧'},
+  {e:'cake',      c:'蛋糕',      emo:'🍰'},
+  {e:'sweet',     c:'糖果',      emo:'🍬'},
+  {e:'ice cream', c:'冰激凌',    emo:'🍨'}
+];
+
+var STORE = 'polestar-english-v1';
+var store = {wrong:{}, seen:{}};
+try { var s = JSON.parse(localStorage.getItem(STORE)); if (s) store = Object.assign(store, s); } catch(e){}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(store)); }catch(e){} }
+
+var TTS_OK = (typeof window.speechSynthesis !== 'undefined') && (typeof window.SpeechSynthesisUtterance !== 'undefined');
+
+var state = { tab:'daily', mode:'card', queue:[], idx:0, right:0, misses:[], flipped:false, done:false, locked:false };
+/* 支持首页带 #study / #daily 直接进对应入口 */
+(function(){ var h=(location.hash||'').replace('#',''); if(h==='daily'||h==='study') state.tab=h; })();
+
+var app = document.getElementById('app');
+function rnd(n){ return Math.floor(Math.random()*n); }
+function shuffle(a){ for(var i=a.length-1;i>0;i--){var j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+function render(){ if (state.tab==='daily') renderDaily(); else renderStudy(); }
+
+/* ---------- 日常练习 ---------- */
+function renderDaily(){
+  var html = '<div class="card">'
+    + '<h1>🔤 英语 · 日常练习</h1>'
+    + '<p class="sub">外研新交际 二上 · Unit 2 Yummy, yummy food!</p>'
+    + '<div class="tabs"><div class="tab '+(state.tab==='daily'?'on':'')+'" data-tab="daily">日常练习</div>'
+    + '<div class="tab" data-tab="study">学业入口</div></div>';
+
+  if (state.done){ html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
+
+  if (state.queue.length===0){
+    html += '<div class="modes">'
+      + '<div class="mode '+(state.mode==='card'?'on':'')+'" data-mode="card">🃏 闪卡<div style="font-size:11px;margin-top:2px">中文想英文</div></div>'
+      + '<div class="mode '+(state.mode==='en2cn'?'on':'')+'" data-mode="en2cn">👀 选意思<div style="font-size:11px;margin-top:2px">看单词选中文</div></div>'
+      + '<div class="mode '+(state.mode==='listen'?'on':'')+((TTS_OK)?'':' off')+'" data-mode="listen">🔊 听音<div style="font-size:11px;margin-top:2px">听到什么选什么</div></div>'
+      + '</div>';
+    if (!TTS_OK) html += '<div class="note">这个浏览器不能自动朗读，听音模式用不了。闪卡和选意思照样能练。</div>';
+    html += '<button class="btn mt16" id="startBtn">开始（Unit 2 · '+WORDS_U2.length+' 个词）</button>'
+      + '<button class="btn ghost mt10" id="wrongBtn">只练错过的词（'+Object.keys(store.wrong).length+'）</button>'
+      + '<p class="tip">一次把这 14 个词过一轮，卡住的进错词本，下次优先出</p></div>';
+    app.innerHTML = html;
+    bindBase();
+    document.querySelectorAll('.mode').forEach(function(m){
+      m.onclick = function(){
+        if (m.classList.contains('off')) return;
+        state.mode = m.dataset.mode; render();
+      };
+    });
+    document.getElementById('startBtn').onclick = function(){ startRound(WORDS_U2); };
+    var wb = document.getElementById('wrongBtn');
+    if (Object.keys(store.wrong).length===0){ wb.disabled = true; wb.textContent = '还没有错过词，真棒'; }
+    else wb.onclick = function(){
+      var list = WORDS_U2.filter(function(o){ return store.wrong[o.e]; });
+      if (list.length) startRound(list);
+    };
+    return;
+  }
+
+  var q = state.queue[state.idx];
+  var pct = Math.round(state.idx / state.queue.length * 100);
+  html += '<div class="topbar"><span>第 '+(state.idx+1)+' / '+state.queue.length+' 个</span><span>对 '+state.right+'</span></div>'
+    + '<div class="prog"><i style="width:'+pct+'%"></i></div>';
+
+  if (state.mode==='card'){
+    if (!state.flipped){
+      html += '<div class="flash" id="flash"><div class="emo">'+q.emo+'</div><div class="cn">'+q.c+'</div>'
+        + '<div class="hint">英文怎么说？在脑子里想一下，然后点卡片翻面</div></div>'
+        + '<div class="fb" id="fb"></div>';
+    } else {
+      html += '<div class="flash" id="flash2"><div class="emo">'+q.emo+'</div>'
+        + '<div class="en">'+q.e+'</div><div class="ph">'+q.c+'</div>'
+        + '<div class="hint">念两遍，记住它</div></div>'
+        + '<div class="fb" id="fb"></div>'
+        + '<div class="row2"><button class="btn ghost" id="noBtn">没记住</button>'
+        + '<button class="btn green" id="okBtn">记住了</button></div>';
+      if (TTS_OK) html += '<button class="btn ghost mt10" id="speakBtn">🔊 听发音</button>';
+    }
+  } else if (state.mode==='en2cn'){
+    var opts = buildOptions(q, 'c');
+    html += '<div class="flash"><div class="en" style="font-size:40px">'+q.e+'</div>'
+      + '<div class="hint">这个单词是什么意思？</div></div><div class="mt16">';
+    opts.forEach(function(o){ html += '<button class="opt" data-v="'+o+'">'+o+'</button>'; });
+    html += '</div><div class="fb" id="fb"></div>';
+  } else {
+    html += '<div class="flash"><button class="btn ghost" id="speakBtn" style="max-width:260px;margin:0 auto">🔊 点这里听</button>'
+      + '<div class="hint">听清了吗？下面选出你听到的词</div></div><div class="mt16">';
+    var opts2 = buildOptions(q, 'e');
+    opts2.forEach(function(o){ html += '<button class="opt" data-v="'+o+'">'+o+'</button>'; });
+    html += '</div><div class="fb" id="fb"></div>';
+  }
+
+  html += '<button class="btn ghost mt10" id="quitBtn">退出</button></div>';
+  app.innerHTML = html;
+  bindBase();
+
+  var fl = document.getElementById('flash');
+  if (fl) fl.onclick = function(){ state.flipped = true; if (TTS_OK) speakEn(q.e); render(); };
+  var fl2 = document.getElementById('flash2');
+  if (fl2) fl2.onclick = function(){ if (TTS_OK) speakEn(q.e); };
+
+  var ok = document.getElementById('okBtn');
+  if (ok) ok.onclick = function(){ judgeCard(true); };
+  var no = document.getElementById('noBtn');
+  if (no) no.onclick = function(){ judgeCard(false); };
+
+  var sp = document.getElementById('speakBtn');
+  if (sp) sp.onclick = function(){ speakEn(q.e); };
+
+  document.querySelectorAll('.opt').forEach(function(b){
+    b.onclick = function(){ pickAnswer(b.dataset.v, b); };
+  });
+  document.getElementById('quitBtn').onclick = function(){ state.queue = []; state.done = false; render(); };
+}
+
+function buildOptions(q, field){
+  var right = q[field];
+  var pool = WORDS_U2.filter(function(o){ return o[field] !== right; }).map(function(o){ return o[field]; });
+  var opts = shuffle(pool).slice(0, 3);
+  opts.push(right);
+  return shuffle(opts);
+}
+
+function judgeCard(ok){
+  var q = state.queue[state.idx];
+  if (ok){ state.right++; delete store.wrong[q.e]; }
+  else { state.misses.push(q.e); store.wrong[q.e] = true; }
+  store.seen[q.e] = (store.seen[q.e]||0)+1;
+  save();
+  state.idx++; state.flipped = false;
+  if (state.idx >= state.queue.length) state.done = true;
+  render();
+}
+
+function pickAnswer(v, btn){
+  if (state.locked) return;
+  var q = state.queue[state.idx];
+  var right = state.mode==='en2cn' ? q.c : q.e;
+  var fb = document.getElementById('fb');
+  var ok = (v === right);
+  if (ok){
+    state.locked = true;
+    state.right++; delete store.wrong[q.e];
+    btn.classList.add('right');
+    fb.textContent = '对了！'+q.e+' = '+q.c;
+    fb.className = 'fb good';
+    store.seen[q.e] = (store.seen[q.e]||0)+1; save();
+    setTimeout(function(){ state.locked=false; state.idx++; if(state.idx>=state.queue.length) state.done=true; render(); }, 900);
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '再听/看一遍想想';
+    fb.className = 'fb bad';
+    document.querySelectorAll('.opt').forEach(function(b){
+      if (b.dataset.v === right) b.classList.add('show');
+    });
+    store.wrong[q.e] = true; save();
+    if (state.misses.indexOf(q.e) < 0) state.misses.push(q.e);
+    state.locked = true;
+    setTimeout(function(){ state.locked=false; state.idx++; if(state.idx>=state.queue.length) state.done=true; render(); }, 1800);
+  }
+}
+
+function renderResult(){
+  var total = state.queue.length, r = state.right;
+  var stars = r===total ? '★★★' : (r>=total*0.8 ? '★★' : (r>=total*0.6 ? '★' : '再来一次'));
+  var html = '<div class="scoreline" style="font-size:42px;margin:16px 0 4px">'+stars+'</div>'
+    + '<div class="scoreline">记住 '+r+' / '+total+' 个词</div>';
+  if (state.misses.length){
+    html += '<div class="wronglist"><b>这几个再念两遍：</b><br>'+state.misses.join('、')+'</div>';
+  } else {
+    html += '<p class="tip" style="color:#1F7A45;font-weight:800;font-size:16px">全记住了，厉害！</p>';
+  }
+  html += '<button class="btn mt16" id="againBtn">再来一轮</button>'
+    + '<button class="btn ghost mt10" id="backBtn">回首页</button>';
+  return html;
+}
+
+function startRound(list){
+  var words = list.slice();
+  var extra = words.filter(function(o){ return store.wrong[o.e]; });
+  var rest  = words.filter(function(o){ return !store.wrong[o.e]; });
+  state.queue = shuffle(extra).concat(shuffle(rest));
+  state.idx = 0; state.right = 0; state.misses = []; state.flipped = false; state.done = false; state.locked = false;
+  render();
+}
+
+function speakEn(text){
+  if (!TTS_OK) return;
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.8;
+    window.speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+/* ---------- 学业入口 ---------- */
+function renderStudy(){
+  var html = '<div class="card">'
+    + '<h1>🔤 英语 · 学业入口</h1>'
+    + '<p class="sub">外研社《新交际英语》二年级上册 · 外研福建版</p>'
+    + '<div class="tabs"><div class="tab" data-tab="daily">日常练习</div>'
+    + '<div class="tab '+(state.tab==='study'?'on':'')+'" data-tab="study">学业入口</div></div>';
+
+  UNITS.forEach(function(u){
+    html += '<div class="unit '+(u.open?'':'off')+'"><h3>Unit '+u.u+' · '+u.title+'</h3>'
+      + '<div class="meta">'+u.cn+(u.open?' · 已学，'+WORDS_U2.length+' 个词':' · 还没学到')+'</div></div>';
+  });
+
+  html += '<div class="note"><b>Unit 2 的 14 个词</b>（点词听发音）</div><div class="wordlist" id="wl">';
+  WORDS_U2.forEach(function(o){
+    html += '<div class="wchip" data-e="'+o.e+'"><div class="emo">'+o.emo+'</div>'
+      + '<div class="e">'+o.e+'</div><div class="c">'+o.c+'</div></div>';
+  });
+  html += '</div>'
+    + '<div class="note" style="border-left-color:#bbb">进度：Unit 1 Feelings 和 Unit 2 已学。Unit 3 Weather 以后的词表等学到再往里加。</div>'
+    + '<p class="tip">词表来自教材配套单词表。课本 Unit 2 那几页的单词栏可以对一眼</p></div>';
+
+  app.innerHTML = html;
+  bindBase();
+  document.querySelectorAll('.wchip').forEach(function(el){
+    el.onclick = function(){ speakEn(el.dataset.e); };
+  });
+}
+
+function bindBase(){
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.onclick = function(){
+      state.tab = t.dataset.tab;
+      if (state.tab!=='daily'){ state.queue = []; state.done = false; }
+      render();
+    };
+  });
+  var ag = document.getElementById('againBtn');
+  if (ag) ag.onclick = function(){ startRound(WORDS_U2); };
+  var bk = document.getElementById('backBtn');
+  if (bk) bk.onclick = function(){ state.queue = []; state.done = false; render(); };
+}
+
+render();
+</script>
+</body>
+</html>
