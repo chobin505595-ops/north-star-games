@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FAF7F2">
+<title>🎯 读题训练 · 北极星学习屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232F7D52'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%F0%9F%8E%AF%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --s1:6px;--s2:10px;--s3:16px;--s4:24px;
+  --ink:#1E2B22;--ink2:#5F584C;--ink3:#6B6459;
+  --paper:#FFFDFA;--bg1:#FAF7F2;--bg2:#EFE9DE;--line:#E4DCD0;
+  --c:#2F7D52;--c-d:#1D5C39;--c-soft:rgba(47,125,82,.08);
+  --r-card:20px;--r-btn:12px;--r-sm:10px;
+  --red:#B3402F;--red-soft:#FBEFEC;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  background:linear-gradient(170deg,var(--bg1),var(--bg2));
+  color:var(--ink);min-height:100vh;padding:var(--s4) var(--s3);
+  display:flex;justify-content:center;-webkit-font-smoothing:antialiased;
+  -webkit-user-select:text;user-select:text;
+}
+#app{width:100%;max-width:540px}
+.card{background:var(--paper);border-radius:var(--r-card);padding:var(--s4) var(--s3);
+  box-shadow:0 6px 20px rgba(30,43,34,.10)}
+h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-height:1.3}
+.sub{text-align:center;color:var(--ink2);font-size:14px;margin-top:var(--s1);line-height:1.6}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  min-height:52px;border-radius:var(--r-btn);border:none;font-family:inherit;
+  font-size:15px;font-weight:700;cursor:pointer;background:var(--c);color:#FFFDFA;
+  transition:transform .15s}
+.btn:active{transform:scale(.975)}
+.btn.ghost{background:#F1ECE3;color:var(--ink2)}
+.btn.green{background:#2F7D52;color:#FFFDFA}
+.mt10{margin-top:var(--s2)}
+.mt16{margin-top:var(--s3)}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;
+  font-size:13.5px;color:var(--ink2);font-weight:600;margin-bottom:var(--s2)}
+.prog{height:6px;background:#E7E0D4;border-radius:99px;overflow:hidden;margin-bottom:var(--s3)}
+.prog i{display:block;height:100%;background:var(--c);border-radius:99px;
+  transition:width .2s;width:0}
+
+/* 题目 */
+.qbox{background:var(--c-soft);border-radius:16px;padding:var(--s3) var(--s3);margin-bottom:var(--s3)}
+.qtext{font-size:20px;line-height:1.75;font-weight:600;letter-spacing:.2px}
+.qtext b{color:var(--c-d);font-weight:900}
+
+.asklabel{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:var(--s2);
+  display:flex;align-items:center;gap:6px}
+.asklabel span{font-size:13px;font-weight:600;color:var(--ink3)}
+
+.opt{display:block;width:100%;text-align:left;background:var(--paper);
+  border:2px solid var(--line);border-radius:var(--r-btn);padding:15px 16px;
+  font-family:inherit;font-size:16.5px;font-weight:600;color:var(--ink);
+  margin-bottom:var(--s2);cursor:pointer;transition:transform .15s,border-color .15s}
+.opt:active{transform:scale(.985)}
+.opt.right{border-color:var(--c);background:var(--c-soft);color:var(--c-d);font-weight:800}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.opt.dim{opacity:.45}
+
+/* 计算 */
+.calcbox{background:var(--paper);border:2px solid var(--c);border-radius:16px;
+  padding:var(--s4) var(--s3);text-align:center;margin-bottom:var(--s3)}
+.calcexpr{font-size:26px;font-weight:900;color:var(--c-d);letter-spacing:1px}
+.inputrow{display:flex;gap:var(--s2);margin-top:var(--s3)}
+.ansinput{flex:1;min-width:0;min-height:54px;border:2px solid var(--line);border-radius:var(--r-btn);
+  font-family:inherit;font-size:24px;font-weight:800;text-align:center;color:var(--ink);
+  background:var(--paper)}
+.ansinput:focus{outline:none;border-color:var(--c)}
+.ansinput.right{border-color:var(--c);background:var(--c-soft);color:var(--c-d)}
+.ansinput.wrong{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.submitbtn{width:auto;padding:0 22px;white-space:nowrap;min-height:54px}
+
+.fb{font-size:15px;font-weight:700;line-height:1.6;text-align:center;
+  min-height:24px;margin-top:var(--s2)}
+.fb.good{color:var(--c-d)}
+.fb.bad{color:var(--red)}
+
+.tip{font-size:13px;color:var(--ink3);line-height:1.8;margin-top:var(--s2)}
+.note{background:#FBF6EC;border-radius:var(--r-sm);padding:12px 14px;
+  font-size:13.5px;line-height:1.8;color:var(--ink2);margin-top:var(--s3)}
+
+/* 结果 */
+.scoreline{display:flex;justify-content:center;gap:var(--s4);margin:var(--s4) 0}
+.scoreitem{text-align:center}
+.scoreitem .n{font-size:32px;font-weight:900;color:var(--c-d);line-height:1}
+.scoreitem .l{font-size:12.5px;color:var(--ink2);margin-top:6px;font-weight:600}
+.diag{background:#FBF6EC;border-radius:var(--r-sm);padding:14px 16px;
+  font-size:14px;line-height:1.8;color:var(--ink);margin-top:var(--s3)}
+.diag b{color:var(--c-d)}
+
+@media (max-width:380px){
+  h1{font-size:20px}
+  .qtext{font-size:18px}
+  .opt{font-size:15.5px;padding:13px 14px}
+  .calcexpr{font-size:23px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   读题训练
+   核心：把「读题」和「计算」分开算分。
+   78 分那次，问题不是不会算，是没读清题。
+   所以每题先问「这道题问的是什么」，选对了才让算。
+   ============================================================ */
+
+var ROUND_LEN = 10;
+
+var QUESTIONS = [
+  { text:'卡比兽一口气吃了 <b>5</b> 碗饭，又吃了 <b>3</b> 碗，还喝了 <b>2</b> 杯水。',
+    ask:'一共吃了几碗饭？',
+    opts:['一共吃了几碗饭？','一共喝了几杯水？','一共吃了几碗菜？'],
+    ans:8, calc:'5 + 3 = 8',
+    why:'"喝了 2 杯水"用不上，题目问的是吃饭。' },
+
+  { text:'绿鳄王的池子里养了 <b>9</b> 条鱼。它先吃了 <b>2</b> 条，后来小鳄鱼又抓来 <b>4</b> 条。',
+    ask:'现在池子里有几条鱼？',
+    opts:['现在池子里有几条鱼？','绿鳄王吃了几条鱼？','小鳄鱼抓来几条鱼？'],
+    ans:11, calc:'9 - 2 + 4 = 11',
+    why:'"现在"是关键，先减后加。' },
+
+  { text:'妈妈买了 <b>3</b> 盒精灵球，每盒 <b>6</b> 个。回家的路上又单独买了 <b>2</b> 个。',
+    ask:'一共买了几个精灵球？',
+    opts:['一共买了几个精灵球？','每盒有几个精灵球？','一共买了几盒？'],
+    ans:20, calc:'3 × 6 + 2 = 20',
+    why:'先算 3 盒一共多少，再加单独买的 2 个。' },
+
+  { text:'甲贺忍蛙一口气跳了 <b>7</b> 下，卡比兽只跳了 <b>4</b> 下。',
+    ask:'甲贺忍蛙比卡比兽多跳几下？',
+    opts:['甲贺忍蛙比卡比兽多跳几下？','它们一共跳了几下？','卡比兽跳了几下？'],
+    ans:3, calc:'7 - 4 = 3',
+    why:'"比…多"用减法，不是把它们加起来。' },
+
+  { text:'桌上原来有 <b>15</b> 颗糖。阿宝吃了 <b>6</b> 颗，妈妈又放上去 <b>3</b> 颗。',
+    ask:'现在桌上有几颗糖？',
+    opts:['现在桌上有几颗糖？','阿宝吃了几颗糖？','妈妈放上去几颗糖？'],
+    ans:12, calc:'15 - 6 + 3 = 12',
+    why:'先减掉吃掉的，再加上放上去的。' },
+
+  { text:'聚义厅里有 <b>8</b> 位好汉在喝酒。后来走了 <b>3</b> 位，又来 <b>5</b> 位。',
+    ask:'现在聚义厅里有几位好汉？',
+    opts:['现在聚义厅里有几位好汉？','走了几位好汉？','又来了几位好汉？'],
+    ans:10, calc:'8 - 3 + 5 = 10',
+    why:'走了要减，来了要加。' },
+
+  { text:'蝠鲼一次能游 <b>9</b> 米，水蛭一次只能游 <b>2</b> 米。蝠鲼游了 <b>3</b> 次。',
+    ask:'蝠鲼一共游了多少米？',
+    opts:['蝠鲼一共游了多少米？','水蛭一次游多少米？','蝠鲼游了几次？'],
+    ans:27, calc:'9 × 3 = 27',
+    why:'"水蛭游 2 米"是多余的，问的是蝠鲼。' },
+
+  { text:'教室里有 <b>6</b> 排座位，每排坐 <b>7</b> 个人。今天有 <b>2</b> 个人请假没来。',
+    ask:'今天来了多少人？',
+    opts:['今天来了多少人？','教室里一共有多少个座位？','今天有几个人请假？'],
+    ans:40, calc:'6 × 7 - 2 = 40',
+    why:'座位数减去请假的，才是今天来的人。' },
+
+  { text:'阿宝有 <b>4</b> 盒宝可梦卡，每盒 <b>8</b> 张。他送给同学 <b>5</b> 张。',
+    ask:'阿宝还剩几张卡？',
+    opts:['阿宝还剩几张卡？','阿宝原来有几张卡？','送给同学几张卡？'],
+    ans:27, calc:'4 × 8 - 5 = 27',
+    why:'"还剩"要先算总数，再减掉送出去的。' },
+
+  { text:'树上停着 <b>12</b> 只鸟。飞走了 <b>5</b> 只，过了一会儿又飞来 <b>4</b> 只。',
+    ask:'现在树上有几只鸟？',
+    opts:['现在树上有几只鸟？','飞走了几只鸟？','又飞来了几只鸟？'],
+    ans:11, calc:'12 - 5 + 4 = 11',
+    why:'飞走减，飞来加。' },
+
+  { text:'绿鳄王有 <b>3</b> 个池塘，每个池塘里养着 <b>8</b> 条鱼。昨天它又买了 <b>6</b> 条放进第一个池塘。',
+    ask:'现在一共有多少条鱼？',
+    opts:['现在一共有多少条鱼？','每个池塘有几条鱼？','绿鳄王买了多少条鱼？'],
+    ans:30, calc:'3 × 8 + 6 = 30',
+    why:'先算原来三个池塘一共多少，再加新买的。' },
+
+  { text:'阿宝跳绳，上午跳了 <b>26</b> 下，下午跳了 <b>18</b> 下，晚上又跳了 <b>9</b> 下。',
+    ask:'今天一共跳了多少下？',
+    opts:['今天一共跳了多少下？','下午跳了多少下？','上午和下午一共跳了多少下？'],
+    ans:53, calc:'26 + 18 + 9 = 53',
+    why:'三段时间都要加起来，别漏掉晚上那次。' },
+
+  { text:'妈妈买了 <b>25</b> 个苹果。家里吃了 <b>8</b> 个，妈妈下班又买回 <b>9</b> 个。',
+    ask:'现在家里有几个苹果？',
+    opts:['现在家里有几个苹果？','妈妈第一次买了几个苹果？','家里吃了几个苹果？'],
+    ans:26, calc:'25 - 8 + 9 = 26',
+    why:'两次买都要算，吃掉的要减。' },
+
+  { text:'文具店有 <b>5</b> 盒彩笔，每盒 <b>7</b> 支。今天卖出 <b>4</b> 支。',
+    ask:'现在还剩几支彩笔？',
+    opts:['现在还剩几支彩笔？','一共有几盒彩笔？','今天卖出几支彩笔？'],
+    ans:31, calc:'5 × 7 - 4 = 31',
+    why:'先算 5 盒总共几支，再减卖出的。' },
+
+  { text:'卡比兽搬木头。第一次搬 <b>4</b> 根，第二次搬 <b>6</b> 根，第三次搬 <b>5</b> 根。路上掉了 <b>2</b> 根。',
+    ask:'它一共搬回来几根木头？',
+    opts:['它一共搬回来几根木头？','它第三次搬了几根？','路上掉了几根木头？'],
+    ans:13, calc:'4 + 6 + 5 - 2 = 13',
+    why:'三次搬的都要加，路上掉的要减，别只算最后一句。' }
+];
+
+var STATE_KEY = 'polestar-duti-v1';
+
+var state = {
+  screen: 'home',   // home | ask | calc | done
+  queue: [],
+  idx: 0,
+  step: 'ask',      // ask | calc
+  askRight: 0,
+  calcRight: 0,
+  askMiss: [],
+  calcMiss: [],
+  picked: null,
+  trial: false
+};
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(STATE_KEY)||'{}')||{}; }catch(e){ return {}; }
+}
+function save(patch){
+  try{
+    var d = load();
+    for (var k in patch) d[k] = patch[k];
+    localStorage.setItem(STATE_KEY, JSON.stringify(d));
+  }catch(e){}
+}
+
+function shuffle(a){
+  a = a.slice();
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function startRound(){
+  state.queue = shuffle(QUESTIONS).slice(0, ROUND_LEN).map(function(q){
+    return { q:q, opts: shuffle(q.opts) };
+  });
+  state.idx = 0;
+  state.step = 'ask';
+  state.askRight = 0;
+  state.calcRight = 0;
+  state.askMiss = [];
+  state.calcMiss = [];
+  state.picked = null;
+  state.trial = false;
+  state.screen = 'ask';
+  render();
+}
+
+var app = document.getElementById('app');
+
+function render(){
+  if (state.screen === 'home') return renderHome();
+  if (state.screen === 'ask')  return renderAsk();
+  if (state.screen === 'calc') return renderCalc();
+  if (state.screen === 'done') return renderDone();
+}
+
+/* ---------- 首页 ---------- */
+function renderHome(){
+  var d = load();
+  var total = d.rounds || 0;
+  var last = d.last || null;
+  var html = '<div class="card">'
+    + '<h1>🎯 读题训练</h1>'
+    + '<p class="sub">先看清题目问什么，再动手算</p>';
+
+  if (last){
+    html += '<div class="scoreline">'
+      + '<div class="scoreitem"><div class="n">' + last.ask + '</div><div class="l">读题对</div></div>'
+      + '<div class="scoreitem"><div class="n">' + last.calc + '</div><div class="l">算对</div></div>'
+      + '</div>'
+      + '<div class="diag">上次：' + last.when + '　共练过 ' + total + ' 局</div>';
+  }
+
+  html += '<div class="note">'
+    + '<b>这一页故意不给「念题」按钮。</b><br>'
+    + '别的页面能点着听，这一页要你自己读。练的就是「读」。'
+    + '</div>'
+    + '<button class="btn mt16" id="startBtn">开始（' + ROUND_LEN + ' 题）</button>'
+    + '<button class="btn ghost mt10" id="backBtn">← 返回首页</button>'
+    + '</div>';
+  app.innerHTML = html;
+
+  document.getElementById('startBtn').onclick = startRound;
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021e'; };
+}
+
+/* ---------- 第一步：问的是什么 ---------- */
+function renderAsk(){
+  var item = state.queue[state.idx];
+  var q = item.q;
+  var pct = Math.round(state.idx / state.queue.length * 100);
+
+  var html = '<div class="card">'
+    + '<div class="topbar"><span>第 ' + (state.idx+1) + ' / ' + state.queue.length + ' 题</span>'
+    + '<span>读题对 ' + state.askRight + '</span></div>'
+    + '<div class="prog"><i style="width:' + pct + '%"></i></div>'
+    + '<div class="qbox"><div class="qtext">' + q.text + '</div></div>'
+    + '<div class="asklabel">先别算<span>① 这道题问的是什么？</span></div>';
+
+  item.opts.forEach(function(o, i){
+    var cls = 'opt';
+    if (state.picked !== null){
+      if (o === q.ask) cls += ' right';
+      else if (i === state.picked) cls += ' wrong';
+      else cls += ' dim';
+    }
+    html += '<button class="' + cls + '" data-o="' + i + '">' + o + '</button>';
+  });
+
+  html += '<div class="fb" id="fb"></div>';
+
+  if (state.picked !== null && item.opts[state.picked] === q.ask){
+    html += '<button class="btn green mt10" id="toCalc">对了，现在算 →</button>';
+  } else if (state.picked !== null){
+    html += '<div class="note">' + q.why + '<br>再点一次正确的那个。</div>';
+  }
+
+  html += '<button class="btn ghost mt10" id="quitBtn">退出</button></div>';
+  app.innerHTML = html;
+
+  document.querySelectorAll('.opt').forEach(function(b){
+    b.onclick = function(){
+      var i = +b.dataset.o;
+      var chose = item.opts[i];
+      if (state.picked === null){
+        state.picked = i;
+        if (chose === q.ask){
+          state.askRight++;
+          save({ askTotal: (load().askTotal||0) + 1 });
+        } else {
+          state.askMiss.push(q.ask);
+        }
+        render();
+        return;
+      }
+      /* 第一次选错了，允许改选正确答案接着做，但不再算这题读题对 */
+      if (chose === q.ask && item.opts[state.picked] !== q.ask){
+        state.picked = i;
+        render();
+      }
+    };
+  });
+
+  var tc = document.getElementById('toCalc');
+  if (tc) tc.onclick = function(){
+    state.step = 'calc';
+    state.trial = false;
+    state.screen = 'calc';
+    render();
+  };
+
+  document.getElementById('quitBtn').onclick = backHome;
+}
+
+/* ---------- 第二步：算 ---------- */
+function renderCalc(){
+  var item = state.queue[state.idx];
+  var q = item.q;
+  var pct = Math.round((state.idx + 0.5) / state.queue.length * 100);
+
+  var html = '<div class="card">'
+    + '<div class="topbar"><span>第 ' + (state.idx+1) + ' / ' + state.queue.length + ' 题</span>'
+    + '<span>算对 ' + state.calcRight + '</span></div>'
+    + '<div class="prog"><i style="width:' + pct + '%"></i></div>'
+    + '<div class="qbox"><div class="qtext">' + q.text + '</div></div>'
+    + '<div class="asklabel">② 现在算一算<span>' + q.ask + '</span></div>'
+    + '<div class="calcbox">'
+    + '<div class="calcexpr">' + q.calc.split('=')[0].trim() + ' = ?</div>'
+    + '<div class="inputrow">'
+    + '<input id="ansInput" class="ansinput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="写答案">'
+    + '<button class="btn submitbtn" id="submitBtn">提交</button>'
+    + '</div></div>'
+    + '<div class="fb" id="fb"></div>'
+    + '<button class="btn ghost mt10" id="quitBtn">退出</button></div>';
+  app.innerHTML = html;
+
+  var inp = document.getElementById('ansInput');
+  var fb = document.getElementById('fb');
+
+  var submit = function(){
+    var v = (inp.value || '').trim();
+    if (!v) return;
+    if (+v === q.ans){
+      inp.classList.add('right');
+      inp.disabled = true;
+      fb.textContent = '对了！' + q.calc;
+      fb.className = 'fb good';
+      state.calcRight++;
+      save({ calcTotal: (load().calcTotal||0) + 1 });
+      setTimeout(nextQ, 1000);
+    } else if (!state.trial){
+      state.trial = true;
+      inp.classList.add('wrong');
+      fb.textContent = '再想想，还有一次机会';
+      fb.className = 'fb bad';
+      setTimeout(function(){
+        inp.classList.remove('wrong'); inp.value = '';
+        try{ inp.focus(); }catch(e){}
+      }, 800);
+    } else {
+      inp.classList.add('wrong');
+      inp.disabled = true;
+      fb.textContent = '正确答案是 ' + q.ans + '　' + q.calc;
+      fb.className = 'fb bad';
+      state.calcMiss.push({ ask: q.ask, calc: q.calc, ans: q.ans });
+      setTimeout(nextQ, 2400);
+    }
+  };
+
+  document.getElementById('submitBtn').onclick = submit;
+  inp.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); submit(); } });
+  setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 120);
+
+  document.getElementById('quitBtn').onclick = backHome;
+}
+
+function nextQ(){
+  state.idx++;
+  state.picked = null;
+  state.trial = false;
+  if (state.idx >= state.queue.length){
+    state.screen = 'done';
+    finishRound();
+  } else {
+    state.screen = 'ask';
+  }
+  render();
+}
+
+function finishRound(){
+  var n = state.queue.length;
+  var d = load();
+  var now = new Date();
+  var stamp = (now.getMonth()+1) + '月' + now.getDate() + '日';
+  save({
+    rounds: (d.rounds||0) + 1,
+    askTotal: (d.askTotal||0),
+    calcTotal: (d.calcTotal||0),
+    last: { ask: state.askRight, calc: state.calcRight, when: stamp, total: n }
+  });
+}
+
+function renderDone(){
+  var n = state.queue.length;
+  var a = state.askRight, c = state.calcRight;
+  var html = '<div class="card">'
+    + '<h1>这一局练完了</h1>'
+    + '<div class="scoreline">'
+    + '<div class="scoreitem"><div class="n">' + a + '/' + n + '</div><div class="l">读题对</div></div>'
+    + '<div class="scoreitem"><div class="n">' + c + '/' + n + '</div><div class="l">算对</div></div>'
+    + '</div>';
+
+  var diag = '';
+  if (a >= n - 1 && c >= n - 1){
+    diag = '读题和计算都稳。<b>可以加长题目了</b>，下一轮我给你出更绕的。';
+  } else if (a < c - 2){
+    diag = '算得比读得准。<b>问题在读题</b>：看到数字就动手，没看清问什么。以后每道题先念一遍最后一句。';
+  } else if (c < a - 2){
+    diag = '读得比算得准。<b>问题在计算</b>：题目看懂了，算的时候马虎。乘法口诀和进退位要多练。';
+  } else {
+    diag = '读题和计算差不多。<b>两样一起练</b>，每局都点开这个页面做一次。';
+  }
+  html += '<div class="diag">' + diag + '</div>';
+
+  if (state.askMiss.length){
+    html += '<div class="note"><b>这些题问什么，你选错了：</b><br>'
+      + state.askMiss.slice(0,4).map(function(x){ return '· ' + x; }).join('<br>')
+      + '</div>';
+  }
+  if (state.calcMiss.length){
+    html += '<div class="note"><b>这些题算错了：</b><br>'
+      + state.calcMiss.slice(0,4).map(function(x){ return '· ' + x.calc + '　（' + x.ask + '）'; }).join('<br>')
+      + '</div>';
+  }
+
+  html += '<button class="btn mt16" id="againBtn">再来一局</button>'
+    + '<button class="btn ghost mt10" id="backBtn">← 回首页</button>'
+    + '</div>';
+  app.innerHTML = html;
+
+  document.getElementById('againBtn').onclick = startRound;
+  document.getElementById('backBtn').onclick = backHome;
+}
+
+function backHome(){
+  state.screen = 'home';
+  render();
+}
+
+/* 底部导航 */
+(function(){
+  var s = document.createElement('script');
+  s.src = 'nav.js';
+  document.body.appendChild(s);
+})();
+
+render();
+</script>
+</body>
+</html>

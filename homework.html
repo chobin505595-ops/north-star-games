@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FAF7F2">
+<title>✅ 本周作业 · 北极星学习屋</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23345CBF'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%E2%9C%85%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --s1:6px;--s2:10px;--s3:16px;--s4:24px;
+  --ink:#1E2B22;--ink2:#5F584C;--ink3:#6B6459;
+  --paper:#FFFDFA;--bg1:#FAF7F2;--bg2:#EFE9DE;--line:#E4DCD0;
+  --c:#345CBF;--c-d:#24428F;--c-soft:rgba(52,92,191,.08);
+  --r-card:20px;--r-btn:12px;--r-sm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  background:linear-gradient(170deg,var(--bg1),var(--bg2));
+  color:var(--ink);min-height:100vh;padding:var(--s4) var(--s3);
+  display:flex;justify-content:center;-webkit-font-smoothing:antialiased;
+  -webkit-user-select:text;user-select:text;
+}
+#app{width:100%;max-width:540px}
+.card{background:var(--paper);border-radius:var(--r-card);padding:var(--s4) var(--s3);
+  box-shadow:0 6px 20px rgba(30,43,34,.10)}
+h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-height:1.3}
+.sub{text-align:center;color:var(--ink2);font-size:14px;margin-top:var(--s1)}
+
+/* 总进度 */
+.bigprog{display:flex;align-items:center;gap:var(--s3);margin:var(--s3) 0 var(--s2)}
+.bignum{font-size:30px;font-weight:900;color:var(--c-d);line-height:1;white-space:nowrap}
+.bignum small{font-size:14px;font-weight:700;color:var(--ink3)}
+.pbar{flex:1;height:10px;background:#E7E0D4;border-radius:99px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width .25s;width:0}
+
+/* 清单 */
+.list{margin-top:var(--s3)}
+.item{display:flex;align-items:flex-start;gap:12px;padding:16px 4px;
+  border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.item:first-child{border-top:1px solid var(--line)}
+.item:active{background:rgba(52,92,191,.04)}
+.check{flex:0 0 26px;width:26px;height:26px;border-radius:50%;border:2.5px solid #CFC7B9;
+  display:flex;align-items:center;justify-content:center;font-size:15px;color:transparent;
+  transition:all .15s;margin-top:1px}
+.item.done .check{background:var(--c);border-color:var(--c);color:#FFFDFA}
+.itext{flex:1;min-width:0;font-size:15.5px;line-height:1.6;font-weight:600}
+.item.done .itext{color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1.5px}
+.inote{display:block;font-size:12.5px;color:var(--ink3);font-weight:500;margin-top:3px;
+  line-height:1.5}
+.item.done .inote{text-decoration:none;opacity:.7}
+.editbtn{flex:0 0 auto;background:none;border:none;font-size:16px;color:#B5AC9D;
+  cursor:pointer;padding:4px 2px;font-family:inherit}
+.editbtn:active{color:var(--c)}
+
+/* 编辑态 */
+.editrow{display:flex;gap:8px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.editrow input{flex:1;min-width:0;min-height:44px;border:2px solid var(--c);border-radius:10px;
+  padding:8px 12px;font-family:inherit;font-size:15px;font-weight:600;color:var(--ink);
+  background:var(--paper)}
+.editrow input:focus{outline:none}
+.minibtn{border:none;border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:700;
+  padding:0 14px;cursor:pointer;background:var(--c);color:#FFFDFA;min-height:44px}
+.minibtn.gray{background:#EFEAE1;color:var(--ink2)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  min-height:52px;border-radius:var(--r-btn);border:none;font-family:inherit;
+  font-size:15px;font-weight:700;cursor:pointer;background:var(--c);color:#FFFDFA;
+  transition:transform .15s}
+.btn:active{transform:scale(.975)}
+.btn.ghost{background:#F1ECE3;color:var(--ink2)}
+.mt10{margin-top:var(--s2)}
+.mt16{margin-top:var(--s3)}
+
+.tip{font-size:12.5px;color:var(--ink3);line-height:1.8;margin-top:var(--s3);text-align:center}
+.alldone{background:#EAF4EC;border-radius:var(--r-sm);padding:14px 16px;text-align:center;
+  font-size:15px;font-weight:800;color:#1D5C39;margin-top:var(--s3);line-height:1.6}
+
+@media (max-width:380px){
+  h1{font-size:20px}
+  .itext{font-size:14.5px}
+  .bignum{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   本周作业
+   老师点的问题是「作业经常做不完」。
+   孩子不知道还剩几项，就容易放着。
+   打勾看得见，剩几项一眼知道。
+   ============================================================ */
+
+var KEY = 'polestar-hw-v1';
+
+var DEFAULTS = {
+  week: '第 8 周',
+  items: [
+    { t:'语文：背《场景歌》《树之歌》《田家四季歌》', n:'还有《数九歌》《拍手歌》《十二月花名歌》', done:false },
+    { t:'语文：复习第二单元', n:'下周二考试', done:false },
+    { t:'数学：练习一张', n:'', done:false },
+    { t:'英语：跟读视频', n:'Unit 2', done:false },
+    { t:'阅读：自选课外书 30 分钟', n:'', done:false },
+    { t:'亲子共读：《笠翁对韵》「四支4」10 分钟', n:'', done:false },
+    { t:'体育：开合跳 60 个×4 组、1 分钟跳绳×4 组', n:'', done:false },
+    { t:'劳育：洗碗、擦桌、扫地、叠衣、整理书桌', n:'每天拍照记录', done:false }
+  ]
+};
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
+    var d = JSON.parse(raw);
+    if (!d || !d.items) return JSON.parse(JSON.stringify(DEFAULTS));
+    return d;
+  }catch(e){ return JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+function save(d){
+  try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
+}
+
+var data = load();
+var editing = -1;   // 正在编辑那一项的下标
+var adding = false;
+var app = document.getElementById('app');
+
+function render(){
+  var done = data.items.filter(function(x){ return x.done; }).length;
+  var total = data.items.length;
+  var pct = total ? Math.round(done/total*100) : 0;
+
+  var html = '<div class="card">'
+    + '<h1>✅ 本周作业</h1>'
+    + '<p class="sub">' + data.week + '　做完一项点一下</p>'
+    + '<div class="bigprog">'
+    + '<div class="bignum">' + done + '<small> / ' + total + '</small></div>'
+    + '<div class="pbar"><i style="width:' + pct + '%"></i></div>'
+    + '</div>'
+    + '<div class="list">';
+
+  data.items.forEach(function(it, i){
+    if (editing === i){
+      html += '<div class="editrow">'
+        + '<input id="ed" value="' + esc(it.t) + '" placeholder="写这一项做什么">'
+        + '<button class="minibtn" data-save="' + i + '">好</button>'
+        + '<button class="minibtn gray" data-cancel="1">取消</button>'
+        + '</div>';
+    } else {
+      html += '<div class="item' + (it.done ? ' done' : '') + '" data-i="' + i + '">'
+        + '<div class="check">✓</div>'
+        + '<div class="itext">' + esc(it.t)
+        + (it.n ? '<span class="inote">' + esc(it.n) + '</span>' : '')
+        + '</div>'
+        + '<button class="editbtn" data-edit="' + i + '">✎</button>'
+        + '</div>';
+    }
+  });
+
+  html += '</div>';
+
+  if (adding){
+    html += '<div class="editrow" style="border-bottom:none">'
+      + '<input id="ed" placeholder="再加一项作业">'
+      + '<button class="minibtn" data-save="new">加</button>'
+      + '<button class="minibtn gray" data-cancel="1">取消</button>'
+      + '</div>';
+  } else {
+    html += '<button class="btn ghost mt16" id="addBtn">+ 加一项</button>';
+  }
+
+  if (done === total && total > 0){
+    html += '<div class="alldone">🎉 这周作业全做完了<br><span style="font-size:13px;font-weight:600">点下面开新一周</span></div>';
+  }
+
+  html += '<button class="btn mt10" id="newWeekBtn">开始新一周</button>'
+    + '<button class="btn ghost mt10" id="backBtn">← 回首页</button>'
+    + '<p class="tip">✎ 可以改每一项的字，换作业单就改字，不用等我改代码</p>'
+    + '</div>';
+
+  app.innerHTML = html;
+  bind();
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function bind(){
+  document.querySelectorAll('.item').forEach(function(el){
+    el.onclick = function(e){
+      if (e.target.dataset.edit !== undefined) return;
+      var i = +el.dataset.i;
+      if (editing >= 0) return;
+      data.items[i].done = !data.items[i].done;
+      save(data);
+      render();
+    };
+  });
+
+  document.querySelectorAll('[data-edit]').forEach(function(b){
+    b.onclick = function(e){
+      e.stopPropagation();
+      editing = +b.dataset.edit;
+      adding = false;
+      render();
+      var inp = document.getElementById('ed');
+      if (inp){ inp.focus(); try{ inp.select(); }catch(err){} }
+    };
+  });
+
+  document.querySelectorAll('[data-save]').forEach(function(b){
+    b.onclick = function(){
+      var inp = document.getElementById('ed');
+      var v = (inp.value || '').trim();
+      if (!v){ return; }
+      if (b.dataset.save === 'new'){
+        data.items.push({ t:v, n:'', done:false });
+      } else {
+        data.items[+b.dataset.save].t = v;
+      }
+      editing = -1; adding = false;
+      save(data);
+      render();
+    };
+  });
+
+  document.querySelectorAll('[data-cancel]').forEach(function(b){
+    b.onclick = function(){ editing = -1; adding = false; render(); };
+  });
+
+  var ed = document.getElementById('ed');
+  if (ed){
+    ed.addEventListener('keydown', function(e){
+      if (e.key === 'Enter'){
+        e.preventDefault();
+        var btn = document.querySelector('[data-save]');
+        if (btn) btn.click();
+      }
+    });
+  }
+
+  var add = document.getElementById('addBtn');
+  if (add) add.onclick = function(){
+    adding = true; editing = -1; render();
+    var inp = document.getElementById('ed');
+    if (inp) inp.focus();
+  };
+
+  document.getElementById('newWeekBtn').onclick = function(){
+    var n = parseInt(String(data.week).replace(/[^0-9]/g,''), 10);
+    var next = isNaN(n) ? data.week : '第 ' + (n+1) + ' 周';
+    if (!confirm('开新一周？\n\n所有勾会清空，作业文字保留，方便你直接改。')) return;
+    data.week = next;
+    data.items.forEach(function(x){ x.done = false; });
+    save(data);
+    render();
+  };
+
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html'; };
+}
+
+(function(){
+  var s = document.createElement('script');
+  s.src = 'nav.js';
+  document.body.appendChild(s);
+})();
+
+render();
+</script>
+</body>
+</html>
