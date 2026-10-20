@@ -6,20 +6,26 @@
 (function () {
   if (document.getElementById('pnav')) return;
 
+  /* 记一下最后访问的页面，首页靠它显示「上次练了…继续」 */
+  try {
+    var pg = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (pg && pg !== 'index.html') {
+      localStorage.setItem('polestar-last', JSON.stringify({ page: pg, t: Date.now() }));
+    }
+  } catch (e) {}
+
   var css = ''
-    + '.pnav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;'
-    + 'display:flex;gap:8px;padding:6px;border-radius:999px;'
-    + 'background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);'
-    + 'box-shadow:0 8px 28px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.75)}'
-    + '.pnav button,.pnav a{border:none;text-decoration:none;font-family:inherit;font-weight:800;'
-    + 'font-size:14px;padding:10px 18px;border-radius:999px;cursor:pointer;min-height:42px;'
+    + '.pnav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:40;'
+    + 'display:flex;gap:6px;padding:6px;border-radius:999px;'
+    + 'background:#FFFDFA;'
+    + 'box-shadow:0 6px 20px rgba(30,43,34,.16);border:1px solid #E4DCD0}'
+    + '.pnav button,.pnav a{border:none;text-decoration:none;font-family:inherit;font-weight:700;'
+    + 'font-size:14px;padding:10px 17px;border-radius:999px;cursor:pointer;min-height:42px;'
     + 'display:inline-flex;align-items:center;justify-content:center;gap:5px;'
-    + '-webkit-tap-highlight-color:transparent;transition:transform .1s;white-space:nowrap}'
-    + '.pnav button:active,.pnav a:active{transform:scale(.94)}'
-    + '.pnav .back{background:#eef1ef;color:#3d6350;box-shadow:0 3px 0 #d5ddd8}'
-    + '.pnav .back:active{box-shadow:0 1px 0 #d5ddd8}'
-    + '.pnav .home{background:#2E9E5B;color:#fff;box-shadow:0 3px 0 #1F7A45}'
-    + '.pnav .home:active{box-shadow:0 1px 0 #1F7A45}'
+    + '-webkit-tap-highlight-color:transparent;transition:transform .15s;white-space:nowrap}'
+    + '.pnav button:active,.pnav a:active{transform:scale(.95)}'
+    + '.pnav .back{background:#F0EBE2;color:#5F584C}'
+    + '.pnav .home{background:#2F7D52;color:#FFFDFA}'
     + '@media (max-width:380px){.pnav button,.pnav a{font-size:13px;padding:9px 14px}}'
     + 'body{height:auto !important;min-height:100vh !important;padding-bottom:88px !important;'
     + '-webkit-user-select:text;user-select:text}'

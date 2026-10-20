@@ -5,88 +5,231 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#2E9E5B">
+<meta name="theme-color" content="#FAF7F2">
 <title>北极星学习屋</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232E9E5B'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%232F7D52'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle'%3E%E2%AD%90%3C/text%3E%3C/svg%3E">
 <style>
-:root{--green:#2E9E5B;--green-dark:#1F7A45;--orange:#E8834A;--orange-dark:#C4692F;
-  --blue:#4A7BE8;--blue-dark:#2F5CC4;--ink:#173B2A;--bg1:#F7F4EE;--bg2:#EAE4D9;}
+:root{
+  /* 间距四档，全站只用这四个值 */
+  --s1:6px; --s2:10px; --s3:16px; --s4:24px;
+  /* 文字三级，对比度都过 4.5 */
+  --ink:#1E2B22; --ink2:#5F584C; --ink3:#6B6459;
+  /* 面与底，不用纯白纯黑 */
+  --paper:#FFFDFA; --bg1:#FAF7F2; --bg2:#EFE9DE; --line:#E4DCD0;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
-  background:linear-gradient(160deg,var(--bg1),var(--bg2));color:var(--ink);
-  min-height:100vh;display:flex;justify-content:center;padding:20px 16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  background:linear-gradient(170deg,var(--bg1),var(--bg2));
+  color:var(--ink);min-height:100vh;
+  display:flex;justify-content:center;padding:var(--s4) var(--s3);
+  -webkit-font-smoothing:antialiased;
+}
 .wrap{width:100%;max-width:540px}
-.head{text-align:center;margin-bottom:22px}
-h1{font-size:27px;font-weight:900;letter-spacing:1px}
-.sub{color:#7d7364;font-size:14px;margin-top:7px;line-height:1.6}
-.subject{background:#fff;border-radius:24px;padding:18px 18px 16px;margin-bottom:14px;
-  box-shadow:0 8px 24px rgba(60,50,30,.10);border-left:7px solid var(--green)}
-.subject.zh{border-left-color:var(--orange)}
-.subject.en{border-left-color:var(--blue)}
-.shead{display:flex;align-items:center;gap:11px}
-.ico{font-size:30px;line-height:1}
-.sname{font-size:20px;font-weight:900}
-.sdesc{font-size:12.5px;color:#8d8271;margin-top:2px}
-.entries{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-a.entry{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-decoration:none;border-radius:15px;padding:14px 8px 13px;text-align:center;
-  font-weight:800;font-size:15.5px;color:#fff;background:#258749;
-  box-shadow:0 5px 0 #1A5E35;transition:transform .1s,box-shadow .1s;line-height:1.25}
-a.entry:active{transform:translateY(3px);box-shadow:0 2px 0 #1A5E35}
-a.entry .eico{font-size:17px;line-height:1;margin-bottom:4px;opacity:.95}
-a.entry .t{display:block;font-size:11.5px;font-weight:600;opacity:.9;margin-top:4px}
-/* 学业入口：同色系再深一档，实色不虚，和日常拉开明度差 */
-a.entry.study{background:#1A5E35;box-shadow:0 5px 0 #0E3D22}
-a.entry.study:active{box-shadow:0 2px 0 #0E3D22}
-.zh a.entry{background:#BB5622;box-shadow:0 5px 0 #8F4318}
-.zh a.entry:active{box-shadow:0 2px 0 #8F4318}
-.zh a.entry.study{background:#8F4318;box-shadow:0 5px 0 #63300F}
-.zh a.entry.study:active{box-shadow:0 2px 0 #63300F}
-.en a.entry{background:#3D6BDA;box-shadow:0 5px 0 #2A4CA8}
-.en a.entry:active{box-shadow:0 2px 0 #2A4CA8}
-.en a.entry.study{background:#2A4CA8;box-shadow:0 5px 0 #1B3572}
-.en a.entry.study:active{box-shadow:0 2px 0 #1B3572}
-footer{text-align:center;font-size:12.5px;color:#9a9080;margin-top:20px;line-height:1.9}
+
+/* 顶部 */
+.head{margin-bottom:var(--s4)}
+h1{font-size:26px;font-weight:900;letter-spacing:-.3px;line-height:1.2}
+.lead{font-size:15px;color:var(--ink2);margin-top:var(--s1);line-height:1.5}
+.resume{
+  display:inline-flex;align-items:center;gap:8px;margin-top:var(--s3);
+  padding:9px 15px;border-radius:999px;background:var(--paper);
+  border:1.5px solid var(--line);font-size:13.5px;font-weight:600;
+  color:var(--ink2);text-decoration:none;transition:transform .15s
+}
+.resume:active{transform:scale(.98)}
+.resume b{color:var(--ink);font-weight:800}
+.resume .go{color:var(--ink);font-weight:800}
+
+/* 学科列表：靠分隔线和空间分组，不靠卡片盒子 */
+.list{list-style:none;border-top:1px solid var(--line)}
+.row{padding:var(--s4) 0;border-bottom:1px solid var(--line)}
+
+.top{display:flex;align-items:center;gap:var(--s3)}
+.ic{
+  flex:0 0 44px;width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;line-height:1;background:var(--c-soft)
+}
+.name{flex:1;min-width:0}
+h2{font-size:19px;font-weight:800;line-height:1.2;letter-spacing:-.1px}
+.desc{font-size:13.5px;color:var(--ink2);margin-top:3px;line-height:1.4}
+.num{font-size:15px;font-weight:800;color:var(--c-d);white-space:nowrap;text-align:right}
+.num small{display:block;font-size:11.5px;font-weight:600;color:var(--ink3);margin-top:2px}
+
+/* 关卡进度点 */
+.dots{display:flex;gap:5px;margin:var(--s2) 0 0 60px;flex-wrap:wrap}
+.dots i{width:7px;height:7px;border-radius:50%;background:#DDD5C8}
+.dots i.on{background:var(--c)}
+.dots-note{font-size:11.5px;color:var(--ink3);margin-left:8px;align-self:center}
+
+/* 两个入口：主实色，次白底彩边 */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2);margin-top:var(--s3)}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  min-height:52px;border-radius:12px;text-decoration:none;
+  font-size:15px;font-weight:700;color:#FFFDFA;
+  background:var(--c);border:2px solid var(--c);
+  transition:transform .15s
+}
+.btn:active{transform:scale(.975)}
+.btn.alt{background:var(--paper);color:var(--c)}
+
+footer{
+  text-align:center;font-size:12.5px;color:var(--ink3);
+  margin-top:var(--s4);line-height:1.8
+}
+
+@media (max-width:380px){
+  h1{font-size:23px}
+  h2{font-size:18px}
+  .btn{font-size:14px;min-height:50px}
+  .ic{flex-basis:40px;width:40px;height:40px;font-size:20px}
+  .dots{margin-left:56px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="head">
-    <h1>⭐ 北极星学习屋</h1>
-    <p class="sub">阿宝，每天挑一个练<br>日常练习刷基本功，学业入口跟课本走</p>
-  </div>
 
-  <div class="subject">
-    <div class="shead"><span class="ico">🐊</span>
-      <div><div class="sname">数学</div><div class="sdesc">口诀 · 应用题 · 进退位</div></div>
-    </div>
-    <div class="entries">
-      <a class="entry" href="season1.html?v=1021b"><span class="eico">⚡</span>日常练习<span class="t">口诀闯关</span></a>
-      <a class="entry study" href="season2.html?v=1021b"><span class="eico">📚</span>学业入口<span class="t">应用题</span></a>
-    </div>
-  </div>
+  <header class="head">
+    <h1>北极星学习屋</h1>
+    <p class="lead">阿宝，今天练哪个</p>
+    <a class="resume" id="resume" hidden></a>
+  </header>
 
-  <div class="subject zh">
-    <div class="shead"><span class="ico">📖</span>
-      <div><div class="sname">语文</div><div class="sdesc">生字听写 · 看拼音写词语</div></div>
-    </div>
-    <div class="entries">
-      <a class="entry" href="chinese.html?v=1021b#daily"><span class="eico">⚡</span>日常练习<span class="t">写字表 40 字</span></a>
-      <a class="entry study" href="chinese.html?v=1021b#study"><span class="eico">📚</span>学业入口<span class="t">单元 + 听写单</span></a>
-    </div>
-  </div>
+  <ul class="list">
 
-  <div class="subject en">
-    <div class="shead"><span class="ico">🔤</span>
-      <div><div class="sname">英语</div><div class="sdesc">单词闪卡 · 听音</div></div>
-    </div>
-    <div class="entries">
-      <a class="entry" href="english.html?v=1021b#daily"><span class="eico">⚡</span>日常练习<span class="t">Unit 2 单词</span></a>
-      <a class="entry study" href="english.html?v=1021b#study"><span class="eico">📚</span>学业入口<span class="t">六个单元</span></a>
-    </div>
-  </div>
+    <li class="row" style="--c:#2F7D52;--c-d:#1D5C39;--c-soft:rgba(47,125,82,.10)">
+      <div class="top">
+        <span class="ic">🐊</span>
+        <div class="name">
+          <h2>数学</h2>
+          <p class="desc">乘法口诀 · 应用题 · 进退位</p>
+        </div>
+        <div class="num" id="mathNum">—</div>
+      </div>
+      <div class="dots" id="mathDots"></div>
+      <div class="acts">
+        <a class="btn" href="season1.html?v=1021c">⚡ 日常练习</a>
+        <a class="btn alt" href="season2.html?v=1021c">📚 学业入口</a>
+      </div>
+    </li>
 
-  <footer>想放到手机桌面：Safari 打开 → 分享 → 添加到主屏幕<br>进度存在这台设备上，换设备要重新攒</footer>
+    <li class="row" style="--c:#A24E22;--c-d:#7A3813;--c-soft:rgba(162,78,34,.10)">
+      <div class="top">
+        <span class="ic">📖</span>
+        <div class="name">
+          <h2>语文</h2>
+          <p class="desc">生字听写 · 看拼音写词语</p>
+        </div>
+        <div class="num" id="zhNum">—</div>
+      </div>
+      <div class="acts">
+        <a class="btn" href="chinese.html?v=1021c#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="chinese.html?v=1021c#study">📚 学业入口</a>
+      </div>
+    </li>
+
+    <li class="row" style="--c:#345CBF;--c-d:#24428F;--c-soft:rgba(52,92,191,.10)">
+      <div class="top">
+        <span class="ic">🔤</span>
+        <div class="name">
+          <h2>英语</h2>
+          <p class="desc">单词闪卡 · 听音选词</p>
+        </div>
+        <div class="num" id="enNum">—</div>
+      </div>
+      <div class="acts">
+        <a class="btn" href="english.html?v=1021c#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="english.html?v=1021c#study">📚 学业入口</a>
+      </div>
+    </li>
+
+  </ul>
+
+  <footer>想放桌面：Safari 打开 → 分享 → 添加到主屏幕<br>进度存在这台设备上</footer>
 </div>
+
+<script>
+/* 读取各页面存在本机的进度，只读不写 */
+function rd(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}')||{}; }catch(e){ return {}; } }
+
+var m1 = rd('lvw-multiplication-v1');
+var m2 = rd('lvw-insect-v1');
+var zh = rd('polestar-chinese-v1');
+var en = rd('polestar-english-v1');
+
+/* 数学：口诀九关过了几关 */
+var TOTAL_LV = 9;
+var pass = 0;
+for (var i = 0; i < TOTAL_LV; i++){
+  if (m1.stars && m1.stars[i] > 0) pass++;
+}
+var mathWrong = (m2.wrongBook || []).length;
+
+var dotsBox = document.getElementById('mathDots');
+if (dotsBox){
+  var dh = '';
+  for (var j = 0; j < TOTAL_LV; j++){
+    dh += '<i class="' + (j < pass ? 'on' : '') + '"></i>';
+  }
+  dh += '<span class="dots-note">' + (pass ? pass + '/' + TOTAL_LV + ' 关' : '九关还没开始') + '</span>';
+  dotsBox.innerHTML = dh;
+}
+
+var mathNum = document.getElementById('mathNum');
+if (mathNum){
+  if (pass || mathWrong){
+    mathNum.innerHTML = (pass ? pass + '/' + TOTAL_LV : '0/9') +
+      '<small>' + (mathWrong ? '错题 ' + mathWrong + ' 道' : '没有错题') + '</small>';
+  } else {
+    mathNum.innerHTML = '—<small>还没开始</small>';
+  }
+}
+
+/* 语文：错词数 */
+var zhWrong = Object.keys(zh.wrong || {}).length;
+var zhSeen = Object.keys(zh.seen || {}).length;
+var zhNum = document.getElementById('zhNum');
+if (zhNum){
+  zhNum.innerHTML = zhSeen
+    ? (zhWrong ? '<span style="color:#A24E22">错词 ' + zhWrong + '</span><small>练过 ' + zhSeen + ' 个</small>'
+               : '全对<small>练过 ' + zhSeen + ' 个</small>')
+    : '—<small>还没开始</small>';
+}
+
+/* 英语：错词数 */
+var enWrong = Object.keys(en.wrong || {}).length;
+var enSeen = Object.keys(en.seen || {}).length;
+var enNum = document.getElementById('enNum');
+if (enNum){
+  enNum.innerHTML = enSeen
+    ? (enWrong ? '<span style="color:#345CBF">错词 ' + enWrong + '</span><small>练过 ' + enSeen + ' 个</small>'
+               : '全对<small>练过 ' + enSeen + ' 个</small>')
+    : '—<small>还没开始</small>';
+}
+
+/* 继续上次：子页面在 nav.js 里记了最后访问 */
+var PAGE_MAP = {
+  'chinese.html':  { label:'语文', href:'chinese.html?v=1021c#daily' },
+  'english.html':  { label:'英语', href:'english.html?v=1021c#daily' },
+  'season1.html':  { label:'数学口诀', href:'season1.html?v=1021c' },
+  'season2.html':  { label:'数学应用题', href:'season2.html?v=1021c' }
+};
+var last = rd('polestar-last');
+var resumeEl = document.getElementById('resume');
+if (last && last.page && PAGE_MAP[last.page] && last.t && resumeEl){
+  var mins = (Date.now() - last.t) / 60000;
+  var when = mins < 1 ? '刚刚'
+           : mins < 60 ? Math.round(mins) + ' 分钟前'
+           : mins < 1440 ? Math.round(mins / 60) + ' 小时前'
+           : Math.round(mins / 1440) + ' 天前';
+  var item = PAGE_MAP[last.page];
+  resumeEl.href = item.href;
+  resumeEl.innerHTML = '上次练了 <b>' + item.label + '</b> · ' + when + ' <span class="go">继续 →</span>';
+  resumeEl.hidden = false;
+}
+</script>
 </body>
 </html>
