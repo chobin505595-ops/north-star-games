@@ -329,6 +329,8 @@ function renderStudy(){
   });
   html += '</div>'
     + '<div class="note" style="border-left-color:#bbb">进度：Unit 1 Feelings 和 Unit 2 已学。Unit 3 Weather 以后的词表等学到再往里加。</div>'
+    + '<button class="btn mt16" id="copyBtn" style="background:#2E9E5B;box-shadow:0 5px 0 #1F7A45">📋 复制 Unit 2 词表</button>'
+    + '<textarea id="copyBox" readonly style="display:none;width:100%;height:250px;margin-top:12px;border:2px solid #dde6f8;border-radius:14px;padding:12px;font-size:13px;line-height:1.8;font-family:inherit;color:#333;-webkit-user-select:text;user-select:text"></textarea>'
     + '<p class="tip">词表来自教材配套单词表。课本 Unit 2 那几页的单词栏可以对一眼</p></div>';
 
   app.innerHTML = html;
@@ -336,6 +338,57 @@ function renderStudy(){
   document.querySelectorAll('.wchip').forEach(function(el){
     el.onclick = function(){ speakEn(el.dataset.e); };
   });
+  var cbtn = document.getElementById('copyBtn');
+  if (cbtn) cbtn.onclick = function(){ copyToClipboard(buildWordText(), cbtn); };
+}
+
+function buildWordText(){
+  var L = [];
+  L.push('【张蔚桐 · 英语单词表】');
+  L.push('外研社《新交际英语》二年级上册（外研福建版） Unit 2 Yummy, yummy food!');
+  L.push('');
+  L.push('共 ' + WORDS_U2.length + ' 个词：');
+  WORDS_U2.forEach(function(o, i){
+    L.push((i+1) + '. ' + o.e + ' — ' + o.c + ' ' + o.emo);
+  });
+  L.push('');
+  L.push('【六个单元顺序】');
+  UNITS.forEach(function(u){ L.push('Unit ' + u.u + '  ' + u.title + ' — ' + u.cn); });
+  L.push('');
+  L.push('进度：Unit 1、Unit 2 已学，Unit 3 以后等学到再加');
+  return L.join('\n');
+}
+
+function copyToClipboard(text, btn){
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = '✅ 已复制，去粘贴吧';
+    setTimeout(function(){ btn.textContent = old; }, 2000);
+  };
+  var fallback = function(){
+    var box = document.getElementById('copyBox');
+    if (box){
+      box.style.display = 'block';
+      box.value = text;
+      if (btn) btn.textContent = '👇 下面框里全选复制';
+      try { box.focus(); box.select(); } catch(e){}
+      return;
+    }
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.select(); ta.setSelectionRange(0, ta.value.length);
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) done();
+    } catch(e){}
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
 }
 
 function bindBase(){

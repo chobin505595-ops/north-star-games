@@ -375,6 +375,8 @@ function renderStudy(){
     + '木字旁八个容易串：杨 桐 枫 松 柏 棉 杉 桂<br>'
     + '形近字：棉/绵 · 杨/扬 · 柏/伯 · 杉/衫 · 园/圆 · 丛/从 · 辛/幸 · 季/李</div>'
     + '<div class="note" style="border-left-color:#bbb">《数九歌》《十二月花名歌》在语文园地二，只背不写</div>'
+    + '<button class="btn mt16" id="copyBtn" style="background:#4A7BE8;box-shadow:0 5px 0 #2F5CC4">📋 复制整份听写单</button>'
+    + '<textarea id="copyBox" readonly style="display:none;width:100%;height:250px;margin-top:12px;border:2px solid #dde6f8;border-radius:14px;padding:12px;font-size:13px;line-height:1.8;font-family:inherit;color:#333;-webkit-user-select:text;user-select:text"></textarea>'
     + '<p class="tip">生字表来自教材写字表。课本第 16-24 页的田字格可以再对一眼</p></div>';
 
   app.innerHTML = html;
@@ -382,6 +384,67 @@ function renderStudy(){
   document.querySelectorAll('.ch').forEach(function(el){
     el.onclick = function(){ el.classList.toggle('open'); };
   });
+  var cbtn = document.getElementById('copyBtn');
+  if (cbtn) cbtn.onclick = function(){ copyToClipboard(buildDictationText(), cbtn); };
+}
+
+/* 生成可整段复制的听写单纯文本 */
+function buildDictationText(){
+  var L = [];
+  L.push('【张蔚桐 · 语文听写单】');
+  L.push('统编版二年级上册 第二单元（识字1-4）');
+  L.push('');
+  LESSONS.forEach(function(les){
+    L.push('【'+les.name+'】写字表 '+les.chars.length+' 字');
+    L.push(les.chars.split('').map(function(c){ return c+' '+(PINYIN[c]||''); }).join('　'));
+    L.push('组词：'+les.words.map(function(o){ return o.w+' '+o.p; }).join('　'));
+    L.push('');
+  });
+  L.push('【下周怎么排】');
+  L.push('周六：场景歌 + 树之歌（20 字）');
+  L.push('周日：拍手歌 + 田家四季歌（20 字），加回听周六的错字');
+  L.push('一次 15 分钟，错字重写 3 遍，隔天再听这一批，不罚抄');
+  L.push('');
+  L.push('【必错重点】');
+  L.push('戴（17画）· 群（右边是君）· 旗（方+其）· 熊（四点底）');
+  L.push('木字旁八个容易串：杨 桐 枫 松 柏 棉 杉 桂');
+  L.push('形近字：棉/绵 · 杨/扬 · 柏/伯 · 杉/衫 · 园/圆 · 丛/从 · 辛/幸 · 季/李');
+  L.push('');
+  L.push('【只背不写】《数九歌》《十二月花名歌》在语文园地二');
+  return L.join('\n');
+}
+
+/* 复制到剪贴板，Clipboard API 不可用时降级 execCommand */
+function copyToClipboard(text, btn){
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = '✅ 已复制，去粘贴吧';
+    setTimeout(function(){ btn.textContent = old; }, 2000);
+  };
+  var fallback = function(){
+    var box = document.getElementById('copyBox');
+    if (box){
+      box.style.display = 'block';
+      box.value = text;
+      if (btn) btn.textContent = '👇 下面框里全选复制';
+      try { box.focus(); box.select(); } catch(e){}
+      return;
+    }
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.select(); ta.setSelectionRange(0, ta.value.length);
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) done();
+    } catch(e){}
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
 }
 
 function bindBase(){

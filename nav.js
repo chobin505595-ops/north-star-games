@@ -21,7 +21,9 @@
     + '.pnav .home{background:#2E9E5B;color:#fff;box-shadow:0 3px 0 #1F7A45}'
     + '.pnav .home:active{box-shadow:0 1px 0 #1F7A45}'
     + '@media (max-width:380px){.pnav button,.pnav a{font-size:13px;padding:9px 14px}}'
-    + 'body{height:auto !important;min-height:100vh !important;padding-bottom:88px !important}';
+    + 'body{height:auto !important;min-height:100vh !important;padding-bottom:88px !important;'
+    + '-webkit-user-select:text;user-select:text}'
+    + '.pnav button,.pnav a{-webkit-user-select:none;user-select:none}';
   var st = document.createElement('style');
   st.id = 'pnav-style';
   st.textContent = css;
