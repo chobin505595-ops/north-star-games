@@ -73,6 +73,38 @@ h1{font-size:24px;font-weight:900;text-align:center}
 .note{background:#fff8e8;border-left:4px solid var(--yellow);border-radius:10px;padding:12px 14px;
   font-size:13.5px;line-height:1.8;color:#7a6448;margin-top:12px}
 .speak{font-size:15px;padding:12px}
+/* ===== 统一样式：与首页同一套 token 和组件规格 =====
+   颜色保持语文自己的橙色系，只统一圆角、间距、字号、中性色 */
+:root{
+  --s1:6px;--s2:10px;--s3:16px;--s4:24px;
+  --ink:#1E2B22;--ink2:#5F584C;--ink3:#6B6459;
+  --paper:#FFFDFA;--line:#E4DCD0;
+  --r-card:20px;--r-btn:12px;--r-sm:10px;
+  /* 主色对齐首页同一套：色相不变，只压深到白字达标 */
+  --orange:#A24E22;--orange-dark:#7A3813;
+  --green:#2F7D52;--green-dark:#1D5C39;
+}
+body{padding:var(--s4) var(--s3)}
+.card{background:var(--paper);border-radius:var(--r-card);padding:var(--s4) var(--s3);
+  box-shadow:0 6px 20px rgba(30,43,34,.10)}
+h1{font-size:22px;letter-spacing:-.2px}
+.sub{color:var(--ink2);font-size:14px}
+.tabs{border-radius:var(--r-sm)}
+.tab{border-radius:8px}
+.mode{border-radius:var(--r-sm)}
+.btn{border-radius:var(--r-btn);font-size:15px;min-height:52px;box-shadow:none}
+.btn:active{transform:scale(.975);box-shadow:none}
+.btn.ghost{box-shadow:none}
+.btn.green{box-shadow:none}
+.qbox{border-radius:16px}
+.chin{border-radius:var(--r-btn)}
+.lesson{border-radius:16px}
+.wronglist{border-radius:16px}
+.topbar{color:var(--ink2)}
+.tip{color:var(--ink3)}
+/* 去掉左边彩条，改整块浅底 */
+.note{border-left:none !important;border-radius:var(--r-sm);
+  background:#FBF6EC;padding:12px 14px;color:var(--ink2)}
 </style>
 </head>
 <body>
