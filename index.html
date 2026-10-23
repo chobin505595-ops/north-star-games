@@ -119,8 +119,8 @@ footer{
       </div>
       <div class="dots" id="mathDots"></div>
       <div class="acts">
-        <a class="btn" href="season1.html?v=1021h">⚡ 日常练习</a>
-        <a class="btn alt" href="season2.html?v=1021h">📚 学业入口</a>
+        <a class="btn" href="season1.html?v=1021i">⚡ 日常练习</a>
+        <a class="btn alt" href="season2.html?v=1021i">📚 学业入口</a>
       </div>
     </li>
 
@@ -134,8 +134,8 @@ footer{
         <div class="num" id="zhNum">—</div>
       </div>
       <div class="acts">
-        <a class="btn" href="chinese.html?v=1021h#daily">⚡ 日常练习</a>
-        <a class="btn alt" href="chinese.html?v=1021h#study">📚 学业入口</a>
+        <a class="btn" href="chinese.html?v=1021i#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="chinese.html?v=1021i#study">📚 学业入口</a>
       </div>
     </li>
 
@@ -149,8 +149,8 @@ footer{
         <div class="num" id="enNum">—</div>
       </div>
       <div class="acts">
-        <a class="btn" href="english.html?v=1021h#daily">⚡ 日常练习</a>
-        <a class="btn alt" href="english.html?v=1021h#study">📚 学业入口</a>
+        <a class="btn" href="english.html?v=1021i#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="english.html?v=1021i#study">📚 学业入口</a>
       </div>
     </li>
 
@@ -169,7 +169,7 @@ footer{
         <div class="num" id="dutiNum">—</div>
       </div>
       <div class="acts one">
-        <a class="btn" href="duti.html?v=1021h">开始练</a>
+        <a class="btn" href="duti.html?v=1021i">开始练</a>
       </div>
     </li>
 
@@ -183,7 +183,7 @@ footer{
         <div class="num" id="hwNum">—</div>
       </div>
       <div class="acts one">
-        <a class="btn" href="homework.html?v=1021h">看清单</a>
+        <a class="btn" href="homework.html?v=1021i">看清单</a>
       </div>
     </li>
 
@@ -192,7 +192,7 @@ footer{
   <footer>想放桌面：Safari 打开 → 分享 → 添加到主屏幕<br>进度存在这台设备上</footer>
 </div>
 
-<script src="fun.js?v=1021h"></script>
+<script src="fun.js?v=1021i"></script>
 <script>
 /* 读取各页面存在本机的进度，只读不写 */
 function rd(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}')||{}; }catch(e){ return {}; } }
@@ -282,12 +282,12 @@ if (hwNum){
 
 /* 继续上次：子页面在 nav.js 里记了最后访问 */
 var PAGE_MAP = {
-  'chinese.html':  { label:'语文', href:'chinese.html?v=1021h#daily' },
-  'english.html':  { label:'英语', href:'english.html?v=1021h#daily' },
-  'season1.html':  { label:'数学口诀', href:'season1.html?v=1021h' },
-  'season2.html':  { label:'数学应用题', href:'season2.html?v=1021h' },
-  'duti.html':     { label:'读题训练', href:'duti.html?v=1021h' },
-  'homework.html': { label:'本周作业', href:'homework.html?v=1021h' }
+  'chinese.html':  { label:'语文', href:'chinese.html?v=1021i#daily' },
+  'english.html':  { label:'英语', href:'english.html?v=1021i#daily' },
+  'season1.html':  { label:'数学口诀', href:'season1.html?v=1021i' },
+  'season2.html':  { label:'数学应用题', href:'season2.html?v=1021i' },
+  'duti.html':     { label:'读题训练', href:'duti.html?v=1021i' },
+  'homework.html': { label:'本周作业', href:'homework.html?v=1021i' }
 };
 var last = rd('polestar-last');
 var resumeEl = document.getElementById('resume');

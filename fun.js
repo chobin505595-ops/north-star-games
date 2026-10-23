@@ -138,6 +138,18 @@
     + '@keyframes psCardIn{from{transform:scale(.1) rotate(-24deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}'
     + '.ps-cardtag{display:inline-block;background:#A24E22;color:#FFFDFA;font-size:12px;font-weight:800;'
     + 'border-radius:999px;padding:3px 12px;margin-top:10px;letter-spacing:1px}'
+    + '/* 掉卡（非遮挡：飞入后自动消失，不挡点击） */'
+    + '.ps-drop{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:126;'
+    + 'background:#FFFDFA;border:2px solid #E4DCD0;border-radius:16px;padding:10px 18px;'
+    + 'display:flex;align-items:center;gap:10px;box-shadow:0 10px 26px rgba(30,43,34,.22);'
+    + 'pointer-events:none;max-width:88vw;'
+    + 'animation:psDropIn .5s cubic-bezier(.2,1.3,.4,1) both,psDropOut .45s ease 1.5s both}'
+    + '.ps-drop .de{font-size:34px;line-height:1;flex:0 0 auto}'
+    + '.ps-drop .dn{font-size:14px;font-weight:900;color:#1E2B22;white-space:nowrap}'
+    + '.ps-drop .dt{font-size:11px;color:#A24E22;font-weight:800;white-space:nowrap}'
+    + '@keyframes psDropIn{from{transform:translateX(-50%) translateY(60px) scale(.6);opacity:0}'
+    + 'to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}'
+    + '@keyframes psDropOut{to{transform:translateX(-50%) translateY(20px);opacity:0}}'
     + '/* 彩蛋 emoji */'
     + '.ps-egg{position:fixed;bottom:26%;font-size:40px;z-index:125;pointer-events:none;'
     + 'animation:psEggUp 1.4s ease-in both}'
@@ -252,6 +264,17 @@
   }
 
   /* ================= 卡牌 ================= */
+  /* 掉卡提示：非遮挡小卡片，飞入后 1.5s 自动淡出，不挡任何点击（限时模式也不受影响） */
+  function showDrop(c){
+    var d = document.createElement('div');
+    d.className = 'ps-drop';
+    d.innerHTML = '<span class="de">' + c.e + '</span>'
+      + '<span><span class="dn">' + c.n + '</span><br>'
+      + '<span class="dt">🎴 ' + c.setName + '系列 · 已收进卡册</span></span>';
+    document.body.appendChild(d);
+    sndCard();
+    setTimeout(function(){ if (d.parentNode) d.parentNode.removeChild(d); }, 2100);
+  }
   function dropCard(){
     try {
       if (Math.random() >= 0.2) return;
@@ -261,8 +284,7 @@
       var c = pool[Math.floor(Math.random() * pool.length)];
       owned[c.id] = Date.now();
       wr(CARD_KEY, owned);
-      queuePop({ mode: 'card', icon: c.e, tag: '🎴 掉落一张卡', name: c.n,
-        desc: '「' + c.setName + '」系列 · 打开首页卡册看看', sound: 'card', btn: '收下' });
+      setTimeout(function(){ showDrop(c); }, 450);
       /* 集齐一套？ */
       for (var i = 0; i < SETS.length; i++) {
         var s = SETS[i];
@@ -293,7 +315,8 @@
   /* ================= 对外 API ================= */
   var PS = {
 
-    /* 答对时调用。opts.quiet=true 时不放音效不弹连击条（数学两季已有自己的，只吃掉卡/彩蛋/成就） */
+    /* 答对时调用。opts.quiet=true 时不放音效不弹连击条、不弹全局连击成就
+       （数学两季有自己的音效/连击/成就，只吃掉卡/彩蛋/计数） */
     onRight: function (opts){
       opts = opts || {};
       try {
@@ -302,9 +325,9 @@
         if (!opts.quiet) {
           sndRight(combo);
           if (combo >= 2) toast('🔥 ' + combo + ' 连击');
+          if (combo >= 10) unlock('combo10');
+          if (combo >= 20) unlock('combo20');
         }
-        if (combo >= 10) unlock('combo10');
-        if (combo >= 20) unlock('combo20');
         if (Math.random() < 0.12) egg();
         dropCard();
       } catch (e) {}
@@ -319,8 +342,11 @@
       } catch (e) {}
     },
 
-    /* 完成一局/一轮时调用。info = { subj:'语文', right:对几题, total:共几题 } */
-    finishRound: function (info){
+    /* 完成一局/一轮时调用。info = { subj:'语文', right:对几题, total:共几题 }
+       opts.quiet=true（数学两季用）：跳过胜利音效和「第一次全对」弹窗（页面自带同款），
+       喂能量 / 进化 / 连续天数照常 */
+    finishRound: function (info, opts){
+      opts = opts || {};
       try {
         addToday();
         checkStreak();
@@ -330,7 +356,7 @@
         var after = stageIdx(d.e);
         wr(ENERGY_KEY, d);
         ensureAudio();
-        sndWin();
+        if (!opts.quiet) sndWin();
         var s = STAGES[after];
         toast('🐊 ' + s.name + ' 吃饱啦，能量 +1');
         if (after > before) {
@@ -338,7 +364,7 @@
             desc: '绿鳄王长大了！继续练，它还能变得更强。', sound: 'unlock', btn: '继续加油' });
           unlock('evolve' + after);
         }
-        if (info && info.total && info.right != null && info.right >= info.total) unlock('first_perfect');
+        if (!opts.quiet && info && info.total && info.right != null && info.right >= info.total) unlock('first_perfect');
       } catch (e) {}
     },
 
