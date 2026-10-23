@@ -76,6 +76,11 @@ h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-he
 .mt16{margin-top:var(--s3)}
 
 .tip{font-size:12.5px;color:var(--ink3);line-height:1.8;margin-top:var(--s3);text-align:center}
+.updatebar{background:#EAF0FD;border:2px solid var(--c);border-radius:12px;
+  padding:12px 14px;margin-top:var(--s3);font-size:13.5px;color:var(--ink);
+  display:flex;align-items:center;gap:10px;justify-content:space-between}
+.updatebar .ubtn{flex:0 0 auto;background:var(--c);color:#FFFDFA;border:none;border-radius:8px;
+  font-family:inherit;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap}
 .alldone{background:#EAF4EC;border-radius:var(--r-sm);padding:14px 16px;text-align:center;
   font-size:15px;font-weight:800;color:#1D5C39;margin-top:var(--s3);line-height:1.6}
 
@@ -100,16 +105,21 @@ h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-he
 var KEY = 'polestar-hw-v1';
 
 var DEFAULTS = {
-  week: '第 8 周',
+  week: '第 9 周',
+  v: 2,
   items: [
-    { t:'语文：背《场景歌》《树之歌》《田家四季歌》', n:'还有《数九歌》《拍手歌》《十二月花名歌》', done:false },
-    { t:'语文：复习第二单元', n:'下周二考试', done:false },
-    { t:'数学：练习一张', n:'', done:false },
-    { t:'英语：跟读视频', n:'Unit 2', done:false },
-    { t:'阅读：自选课外书 30 分钟', n:'', done:false },
-    { t:'亲子共读：《笠翁对韵》「四支4」10 分钟', n:'', done:false },
-    { t:'体育：开合跳 60 个×4 组、1 分钟跳绳×4 组', n:'', done:false },
-    { t:'劳育：洗碗、擦桌、扫地、叠衣、整理书桌', n:'每天拍照记录', done:false }
+    { t:'德育：为长辈做一件暖心事', n:'捶背、盛饭等', done:false },
+    { t:'德育：爱护公共环境', n:'不乱扔垃圾', done:false },
+    { t:'语文：预习第 7、8 课', n:'课文读3遍；一类字标拼音、组词、音序读3遍；二类字读3遍', done:false },
+    { t:'语文：练习两份 + 抄写', n:'P116 第4课到 P117 第6课词语各一遍，《小儿垂钓》写一遍', done:false },
+    { t:'语文：背诵', n:'第35页「识字加油站」、《小儿垂钓》、《笠翁对韵》六鱼1、六鱼2', done:false },
+    { t:'数学：练习一张', n:'约20分钟', done:false },
+    { t:'英语：用句型分享喜欢的食物', n:"I like … It's good for me. / They are good for me.", done:false },
+    { t:'阅读：自选课外书', n:'30分钟', done:false },
+    { t:'亲子共读：《笠翁对韵》六鱼1、六鱼2', n:'10分钟', done:false },
+    { t:'体育：到户外运动', n:'', done:false },
+    { t:'美育：观察户外美景', n:'', done:false },
+    { t:'劳育：洗碗、擦桌、扫地、叠衣、整理书桌', n:'每天拍照或视频记录', done:false }
   ]
 };
 
@@ -138,7 +148,12 @@ function render(){
 
   var html = '<div class="card">'
     + '<h1>✅ 本周作业</h1>'
-    + '<p class="sub">' + data.week + '　做完一项点一下</p>'
+    + '<p class="sub">' + data.week + '　做完一项点一下</p>';
+
+  if ((data.v || 1) < DEFAULTS.v){
+    html += '<div class="updatebar"><span>📋 学校发了新一周作业单</span>'
+      + '<button class="ubtn" id="updBtn">换成 ' + DEFAULTS.week + '</button></div>';
+  }
     + '<div class="bigprog">'
     + '<div class="bignum">' + done + '<small> / ' + total + '</small></div>'
     + '<div class="pbar"><i style="width:' + pct + '%"></i></div>'
@@ -259,6 +274,15 @@ function bind(){
     if (!confirm('开新一周？\n\n所有勾会清空，作业文字保留，方便你直接改。')) return;
     data.week = next;
     data.items.forEach(function(x){ x.done = false; });
+    save(data);
+    render();
+  };
+
+  var upd = document.getElementById('updBtn');
+  if (upd) upd.onclick = function(){
+    data.week = DEFAULTS.week;
+    data.v = DEFAULTS.v;
+    data.items = DEFAULTS.items.map(function(x){ return { t:x.t, n:x.n, done:false }; });
     save(data);
     render();
   };
