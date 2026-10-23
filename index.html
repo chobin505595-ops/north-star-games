@@ -103,6 +103,9 @@ footer{
     <a class="resume" id="resume" hidden></a>
   </header>
 
+  <!-- 趣味层：绿鳄王养成 + 卡册 + 成就（由 fun.js 渲染） -->
+  <div id="psHome"></div>
+
   <ul class="list">
 
     <li class="row" style="--c:#2F7D52;--c-d:#1D5C39;--c-soft:rgba(47,125,82,.10)">
@@ -116,8 +119,8 @@ footer{
       </div>
       <div class="dots" id="mathDots"></div>
       <div class="acts">
-        <a class="btn" href="season1.html?v=1021g">⚡ 日常练习</a>
-        <a class="btn alt" href="season2.html?v=1021g">📚 学业入口</a>
+        <a class="btn" href="season1.html?v=1021h">⚡ 日常练习</a>
+        <a class="btn alt" href="season2.html?v=1021h">📚 学业入口</a>
       </div>
     </li>
 
@@ -131,8 +134,8 @@ footer{
         <div class="num" id="zhNum">—</div>
       </div>
       <div class="acts">
-        <a class="btn" href="chinese.html?v=1021g#daily">⚡ 日常练习</a>
-        <a class="btn alt" href="chinese.html?v=1021g#study">📚 学业入口</a>
+        <a class="btn" href="chinese.html?v=1021h#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="chinese.html?v=1021h#study">📚 学业入口</a>
       </div>
     </li>
 
@@ -146,8 +149,8 @@ footer{
         <div class="num" id="enNum">—</div>
       </div>
       <div class="acts">
-        <a class="btn" href="english.html?v=1021g#daily">⚡ 日常练习</a>
-        <a class="btn alt" href="english.html?v=1021g#study">📚 学业入口</a>
+        <a class="btn" href="english.html?v=1021h#daily">⚡ 日常练习</a>
+        <a class="btn alt" href="english.html?v=1021h#study">📚 学业入口</a>
       </div>
     </li>
 
@@ -166,7 +169,7 @@ footer{
         <div class="num" id="dutiNum">—</div>
       </div>
       <div class="acts one">
-        <a class="btn" href="duti.html?v=1021g">开始练</a>
+        <a class="btn" href="duti.html?v=1021h">开始练</a>
       </div>
     </li>
 
@@ -180,7 +183,7 @@ footer{
         <div class="num" id="hwNum">—</div>
       </div>
       <div class="acts one">
-        <a class="btn" href="homework.html?v=1021g">看清单</a>
+        <a class="btn" href="homework.html?v=1021h">看清单</a>
       </div>
     </li>
 
@@ -189,6 +192,7 @@ footer{
   <footer>想放桌面：Safari 打开 → 分享 → 添加到主屏幕<br>进度存在这台设备上</footer>
 </div>
 
+<script src="fun.js?v=1021h"></script>
 <script>
 /* 读取各页面存在本机的进度，只读不写 */
 function rd(k){ try{ return JSON.parse(localStorage.getItem(k)||'{}')||{}; }catch(e){ return {}; } }
@@ -278,12 +282,12 @@ if (hwNum){
 
 /* 继续上次：子页面在 nav.js 里记了最后访问 */
 var PAGE_MAP = {
-  'chinese.html':  { label:'语文', href:'chinese.html?v=1021g#daily' },
-  'english.html':  { label:'英语', href:'english.html?v=1021g#daily' },
-  'season1.html':  { label:'数学口诀', href:'season1.html?v=1021g' },
-  'season2.html':  { label:'数学应用题', href:'season2.html?v=1021g' },
-  'duti.html':     { label:'读题训练', href:'duti.html?v=1021g' },
-  'homework.html': { label:'本周作业', href:'homework.html?v=1021g' }
+  'chinese.html':  { label:'语文', href:'chinese.html?v=1021h#daily' },
+  'english.html':  { label:'英语', href:'english.html?v=1021h#daily' },
+  'season1.html':  { label:'数学口诀', href:'season1.html?v=1021h' },
+  'season2.html':  { label:'数学应用题', href:'season2.html?v=1021h' },
+  'duti.html':     { label:'读题训练', href:'duti.html?v=1021h' },
+  'homework.html': { label:'本周作业', href:'homework.html?v=1021h' }
 };
 var last = rd('polestar-last');
 var resumeEl = document.getElementById('resume');
@@ -298,6 +302,9 @@ if (last && last.page && PAGE_MAP[last.page] && last.t && resumeEl){
   resumeEl.innerHTML = '上次练了 <b>' + item.label + '</b> · ' + when + ' <span class="go">继续 →</span>';
   resumeEl.hidden = false;
 }
+
+/* 趣味层首页：绿鳄王 + 卡册 + 成就 */
+if (window.PS) PS.renderHome(document.getElementById('psHome'));
 </script>
 </body>
 </html>

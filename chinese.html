@@ -123,6 +123,7 @@ h1{font-size:22px;letter-spacing:-.2px}
 </head>
 <body>
 <div id="app"></div>
+<script src="fun.js?v=1021h"></script>
 <script>
 /* ============================================================
    语文 · 北极星学习屋
@@ -209,7 +210,7 @@ function renderDaily(){
     +   '<div class="tab" data-tab="study">学业入口</div>'
     + '</div>';
 
-  if (state.done) { html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
+  if (state.done) { psRoundDone(); html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
 
   if (state.queue.length===0){
     html += '<div class="modes">'
@@ -308,12 +309,14 @@ function renderDaily(){
         delete store.wrong[q.w];
         store.seen[q.w] = (store.seen[q.w]||0)+1;
         save();
+        PS.onRight();
         setTimeout(nextQ, 900);
       } else if (!q.tried){
         q.tried = true;
         inp.classList.add('wrong');
         fbEl.textContent = '再想想，还有一次机会';
         fbEl.className = 'fb bad';
+        PS.onWrong();
         setTimeout(function(){
           inp.classList.remove('wrong'); inp.value='';
           try{ inp.focus(); }catch(e){}
@@ -323,6 +326,7 @@ function renderDaily(){
         fbEl.innerHTML = '正确答案：<b>'+q.w+'</b>　'+q.p;
         fbEl.className = 'fb bad';
         state.misses.push(q.w); store.wrong[q.w] = true; save();
+        PS.onWrong();
         setTimeout(nextQ, 2200);
       }
     };
@@ -344,11 +348,19 @@ function renderDaily(){
 
 function judge(ok){
   var q = state.queue[state.idx];
-  if (ok){ state.right++; delete store.wrong[q.w]; }
-  else { state.misses.push(q.w); store.wrong[q.w] = true; }
+  if (ok){ state.right++; delete store.wrong[q.w]; PS.onRight(); }
+  else { state.misses.push(q.w); store.wrong[q.w] = true; PS.onWrong(); }
   store.seen[q.w] = (store.seen[q.w]||0) + 1;
   save();
   nextQ();
+}
+
+/* 一轮练完喂一次绿鳄王（趣味层，只在这里挂钩） */
+function psRoundDone(){
+  if (state.done && !state._psDone && state.queue.length){
+    state._psDone = true;
+    try { PS.finishRound({ subj:'语文', right: state.right, total: state.queue.length }); } catch(e){}
+  }
 }
 
 function nextQ(){
@@ -386,7 +398,7 @@ function startRound(n, pool){
     words = shuffle(words);
   }
   state.queue = words.slice(0, Math.min(n, words.length));
-  state.idx = 0; state.right = 0; state.misses = []; state.revealed = false; state.done = false;
+  state.idx = 0; state.right = 0; state.misses = []; state.revealed = false; state.done = false; state._psDone = false;
   render();
 }
 

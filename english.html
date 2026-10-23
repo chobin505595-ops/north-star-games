@@ -136,6 +136,7 @@ h1{font-size:22px;letter-spacing:-.2px}
 </head>
 <body>
 <div id="app"></div>
+<script src="fun.js?v=1021h"></script>
 <script>
 /* ============================================================
    英语 · 北极星学习屋
@@ -195,7 +196,7 @@ function renderDaily(){
     + '<div class="tabs"><div class="tab '+(state.tab==='daily'?'on':'')+'" data-tab="daily">日常练习</div>'
     + '<div class="tab" data-tab="study">学业入口</div></div>';
 
-  if (state.done){ html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
+  if (state.done){ psRoundDone(); html += renderResult(); app.innerHTML = html + '</div>'; bindBase(); return; }
 
   if (state.queue.length===0){
     html += '<div class="modes">'
@@ -302,13 +303,21 @@ function buildOptions(q, field){
 
 function judgeCard(ok){
   var q = state.queue[state.idx];
-  if (ok){ state.right++; delete store.wrong[q.e]; }
-  else { state.misses.push(q.e); store.wrong[q.e] = true; }
+  if (ok){ state.right++; delete store.wrong[q.e]; PS.onRight(); }
+  else { state.misses.push(q.e); store.wrong[q.e] = true; PS.onWrong(); }
   store.seen[q.e] = (store.seen[q.e]||0)+1;
   save();
   state.idx++; state.flipped = false;
   if (state.idx >= state.queue.length) state.done = true;
   render();
+}
+
+/* 一轮练完喂一次绿鳄王（趣味层，只在这里挂钩） */
+function psRoundDone(){
+  if (state.done && !state._psDone && state.queue.length){
+    state._psDone = true;
+    try { PS.finishRound({ subj:'英语', right: state.right, total: state.queue.length }); } catch(e){}
+  }
 }
 
 function pickAnswer(v, btn){
@@ -324,11 +333,13 @@ function pickAnswer(v, btn){
     fb.textContent = '对了！'+q.e+' = '+q.c;
     fb.className = 'fb good';
     store.seen[q.e] = (store.seen[q.e]||0)+1; save();
+    PS.onRight();
     setTimeout(function(){ state.locked=false; state.idx++; if(state.idx>=state.queue.length) state.done=true; render(); }, 900);
   } else {
     btn.classList.add('wrong');
     fb.textContent = '再听/看一遍想想';
     fb.className = 'fb bad';
+    PS.onWrong();
     document.querySelectorAll('.opt').forEach(function(b){
       if (b.dataset.v === right) b.classList.add('show');
     });
@@ -359,7 +370,7 @@ function startRound(list){
   var extra = words.filter(function(o){ return store.wrong[o.e]; });
   var rest  = words.filter(function(o){ return !store.wrong[o.e]; });
   state.queue = shuffle(extra).concat(shuffle(rest));
-  state.idx = 0; state.right = 0; state.misses = []; state.flipped = false; state.done = false; state.locked = false;
+  state.idx = 0; state.right = 0; state.misses = []; state.flipped = false; state.done = false; state.locked = false; state._psDone = false;
   render();
 }
 
@@ -386,7 +397,7 @@ var SENTENCES = [
 
 function startSentenceRound(){
   state.queue = shuffle(SENTENCES.slice());
-  state.idx = 0; state.right = 0; state.misses = []; state.flipped = false; state.done = false; state.locked = false;
+  state.idx = 0; state.right = 0; state.misses = []; state.flipped = false; state.done = false; state.locked = false; state._psDone = false;
   render();
 }
 
@@ -434,11 +445,13 @@ function pickSentence(v, btn, s){
     btn.classList.add('right');
     fb.textContent = '对了！' + s.en + '　（'+s.cn+'）';
     fb.className = 'fb good';
+    PS.onRight();
     setTimeout(function(){ state.locked=false; state.idx++; if(state.idx>=state.queue.length) state.done=true; render(); }, 1600);
   } else {
     btn.classList.add('wrong');
     fb.textContent = s.plural ? "它是好几个，用 They're" : "它是一个，用 It's";
     fb.className = 'fb bad';
+    PS.onWrong();
     document.querySelectorAll('.opt').forEach(function(b){
       if (b.dataset.v === right) b.classList.add('show');
     });

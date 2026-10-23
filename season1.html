@@ -125,6 +125,7 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
 <div id="toast"></div>
 <div id="overlay"></div>
 
+<script src="fun.js?v=1021h"></script>
 <script>
 /* ===== 关卡定义（融入张蔚桐的兴趣） ===== */
 var LEVELS = [
@@ -508,6 +509,7 @@ function answer(v, btn){
     fb.textContent = praise;
     fb.className='feedback good';
     sndRight();
+    PS.onRight({quiet:true});
     if(state.combo===2 || state.combo%5===0) comboToast(state.combo);
     if(state.combo>=10) unlock('combo10');
     if(state.combo>=20) unlock('combo20');
@@ -518,6 +520,7 @@ function answer(v, btn){
     fb.textContent = CHEER[rnd(CHEER.length)]+'（正确答案 '+q.ans+'）';
     fb.className='feedback bad';
     sndWrong();
+    PS.onWrong({quiet:true});
     addWrong(q);
     for(var i=0;i<btns.length;i++){
       if(+btns[i].getAttribute('data-v')===q.ans) btns[i].classList.add('show');
@@ -543,6 +546,8 @@ function finishLevel(){
   clearTimer();
   var c = state.correct;
   var stars = 0;
+  /* 一局打完喂一次绿鳄王（趣味层，与星级无关） */
+  try { PS.finishRound({ subj:'数学口诀', right: state.correct, total: state.questions.length }); } catch(e){}
   if(!state.isRedo){
     if(c >= state.questions.length) stars=3;
     else if(c >= state.questions.length-1) stars=2;

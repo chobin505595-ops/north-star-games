@@ -107,6 +107,7 @@ h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-he
 <body>
 <div id="app"></div>
 
+<script src="fun.js?v=1021h"></script>
 <script>
 /* ============================================================
    读题训练
@@ -296,7 +297,7 @@ function renderHome(){
   app.innerHTML = html;
 
   document.getElementById('startBtn').onclick = startRound;
-  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021e'; };
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021h'; };
 }
 
 /* ---------- 第一步：问的是什么 ---------- */
@@ -341,9 +342,11 @@ function renderAsk(){
         state.picked = i;
         if (chose === q.ask){
           state.askRight++;
+          PS.onRight();
           save({ askTotal: (load().askTotal||0) + 1 });
         } else {
           state.askMiss.push(q.ask);
+          PS.onWrong();
         }
         render();
         return;
@@ -401,6 +404,7 @@ function renderCalc(){
       fb.textContent = '对了！' + q.calc;
       fb.className = 'fb good';
       state.calcRight++;
+      PS.onRight();
       save({ calcTotal: (load().calcTotal||0) + 1 });
       setTimeout(nextQ, 1000);
     } else if (!state.trial){
@@ -408,6 +412,7 @@ function renderCalc(){
       inp.classList.add('wrong');
       fb.textContent = '再想想，还有一次机会';
       fb.className = 'fb bad';
+      PS.onWrong();
       setTimeout(function(){
         inp.classList.remove('wrong'); inp.value = '';
         try{ inp.focus(); }catch(e){}
@@ -418,6 +423,7 @@ function renderCalc(){
       fb.textContent = '正确答案是 ' + q.ans + '　' + q.calc;
       fb.className = 'fb bad';
       state.calcMiss.push({ ask: q.ask, calc: q.calc, ans: q.ans });
+      PS.onWrong();
       setTimeout(nextQ, 2400);
     }
   };
@@ -453,6 +459,10 @@ function finishRound(){
     calcTotal: (d.calcTotal||0),
     last: { ask: state.askRight, calc: state.calcRight, when: stamp, total: n }
   });
+  /* 喂一次绿鳄王（趣味层）：读题对 + 算对 都算进「全对」判定 */
+  try {
+    PS.finishRound({ subj:'读题', right: state.askRight + state.calcRight, total: n * 2 });
+  } catch(e){}
 }
 
 function renderDone(){

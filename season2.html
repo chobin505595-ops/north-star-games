@@ -116,17 +116,23 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
 .ach-item .ai{font-size:22px}
 /* 生物卡 */
 .bcard{background:linear-gradient(160deg,#f2fbf5,#e4f5ea);border-radius:20px;
-  padding:18px;text-align:center;margin:14px 0;border:2px dashed #bfe3cd}
-.bcard .be{font-size:46px;line-height:1.1}
+  padding:18px;text-align:center;margin:14px 0;border:2px dashed #bfe3cd;
+  animation:cardJump .75s cubic-bezier(.2,1.3,.4,1) both}
+.bcard .be{font-size:72px;line-height:1.15}
 .bcard .bn{font-size:19px;font-weight:900;margin-top:4px}
 .bcard .bf{font-size:14px;color:#4d6e5c;line-height:1.6;margin-top:8px;text-align:left}
 .bcard .newtag{font-size:11px;background:var(--orange);color:#fff;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+@keyframes cardJump{0%{transform:scale(.3) translateY(20px);opacity:0}
+  55%{transform:scale(1.12) translateY(-6px);opacity:1}100%{transform:scale(1) translateY(0)}}
 .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.card-item{border:2px solid #dcebe2;border-radius:16px;padding:12px 10px;text-align:center;background:#fff}
+.card-item{border:2px solid #dcebe2;border-radius:16px;padding:14px 10px;text-align:center;background:#fff}
 .card-item.locked{background:#f1f4f2;color:#9db0a6}
-.card-item .ce{font-size:30px;line-height:1.1}
-.card-item .cn{font-size:14px;font-weight:800;margin-top:4px}
-.card-item .cf{font-size:11.5px;color:#6b8a79;line-height:1.5;margin-top:6px;text-align:left}
+.card-item .ce{font-size:64px;line-height:1.15}
+.card-item.locked .ce{filter:grayscale(1);opacity:.35}
+.card-item .cn{font-size:15px;font-weight:900;margin-top:6px}
+.card-item .ctime{font-size:11px;color:#6b8a79;margin-top:3px;font-weight:700}
+.card-item.locked .ctime{color:#9db0a6}
+.card-item .cf{font-size:12px;color:#4d6e5c;line-height:1.6;margin-top:8px;text-align:left}
 .card-item.locked .cf{color:#9db0a6}
 @media (max-width:420px){h1{font-size:26px}.qctx{font-size:17.5px}.opt{font-size:22px}.opts.txt .opt{font-size:17px}}
 /* 听按钮卡片：整块可点，76px 高 */
@@ -150,6 +156,7 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
 <div id="toast"></div>
 <div id="overlay"></div>
 
+<script src="fun.js?v=1021h"></script>
 <script>
 /* =========================================================
    《绿鳄王·虫虫大冒险》第二季
@@ -580,11 +587,19 @@ function renderCollection(){
     '<div class="lvl-name">我的图鉴 '+cardCount()+'/'+keys.length+'</div></div>';
   html+='<div class="card-grid">';
   for(var i=0;i<keys.length;i++){
-    var k=keys[i], c=CARDS[k], got=!!progress.cards[k];
+    var k=keys[i], c=CARDS[k], v=progress.cards[k], got=!!v;
+    var when='';
+    if(got && typeof v==='number'){
+      var t=new Date(v);
+      when='<div class="ctime">'+(t.getMonth()+1)+'月'+t.getDate()+'日解锁</div>';
+    }else if(got){
+      when='<div class="ctime">已解锁</div>';
+    }
     html+='<div class="card-item '+(got?'':'locked')+'">'+
-      '<div class="ce">'+(got?c.emoji:'❓')+'</div>'+
-      '<div class="cn">'+(got?c.name:'未解锁')+'</div>'+
-      '<div class="cf">'+(got?c.fact:'闯过对应的关卡就能收集到这张卡。')+'</div>'+
+      '<div class="ce">'+c.emoji+'</div>'+
+      '<div class="cn">'+(got?c.name:'？？？')+'</div>'+
+      when+
+      '<div class="cf">'+(got?c.fact:'闯过对应的关卡，就能见到它')+'</div>'+
       '</div>';
   }
   html+='</div><p class="sub">每闯过一关，就能收集一张生物卡 🎴</p>'+soundBtn()+'</div>';
@@ -671,6 +686,7 @@ function answer(v, btn){
     fb.textContent = '再想想，还有一次机会';
     fb.className = 'feedback bad';
     sndWrong();
+    PS.onWrong({quiet:true});
     setTimeout(function(){
       if(btn) btn.classList.remove('wrong');
       if(inp){ inp.classList.remove('wrong'); inp.value=''; try{ inp.focus(); }catch(e){} }
@@ -701,6 +717,7 @@ function answer(v, btn){
     if(btn) btn.classList.add('right');
     if(inp) inp.classList.add('right');
     sndRight();
+    PS.onRight({quiet:true});
     if(state.isRedo) removeWrong(q);
   }else{
     state.combo = 0;
@@ -711,6 +728,7 @@ function answer(v, btn){
       (q.hint ? '<br>'+(q.type==='classify'?'':'算式 ')+q.hint : '');
     fb.className='feedback bad';
     sndWrong();
+    PS.onWrong({quiet:true});
     addWrong(q);
     for(var i=0;i<btns.length;i++){
       if(btns[i].getAttribute('data-v')===q.ans) btns[i].classList.add('show');
@@ -737,6 +755,8 @@ function finishLevel(){
   var c = state.correct;
   var stars = 0;
   var newCard = null;
+  /* 一局打完喂一次绿鳄王（趣味层，与星级无关） */
+  try { PS.finishRound({ subj:'数学应用题', right: state.correct, total: state.questions.length }); } catch(e){}
   if(!state.isRedo){
     if(c >= state.questions.length) stars=3;
     else if(c >= state.questions.length-1) stars=2;
@@ -745,7 +765,12 @@ function finishLevel(){
       var prev = progress.stars[state.levelIdx]||0;
       if(stars>prev) progress.stars[state.levelIdx]=stars;
       var ck = LEVELS[state.levelIdx].card;
-      if(ck && !progress.cards[ck]){ progress.cards[ck]=true; newCard = CARDS[ck]; }
+      /* 解锁新图鉴卡：记下时间，跳一下 + 解锁音效 */
+      if(ck && !progress.cards[ck]){
+        progress.cards[ck] = Date.now();
+        newCard = CARDS[ck];
+        try { PS.sndUnlock(); } catch(e){}
+      }
       save();
       unlock('first_pass');
       if(cardCount()>=8) unlock('collector');
