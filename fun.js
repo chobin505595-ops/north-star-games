@@ -196,7 +196,50 @@
     + '.ps-achrow .ai{font-size:22px;flex:0 0 auto}'
     + '.ps-achrow.locked{opacity:.45}'
     + '.ps-achrow b{font-weight:800}'
-    + '.ps-achrow small{display:block;font-size:12px;color:#6B6459;margin-top:1px}';
+    + '.ps-achrow small{display:block;font-size:12px;color:#6B6459;margin-top:1px}'
+    /* ===== 详情弹层（宠物养成详情 / 卡片详情） ===== */
+    + '.ps-detail{position:fixed;inset:0;background:rgba(30,43,34,.55);z-index:140;'
+    + 'display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .25s}'
+    + '.ps-detail.show{opacity:1}'
+    + '.ps-dbox{background:#FFFDFA;border-radius:24px;padding:22px 18px;max-width:360px;width:100%;'
+    + 'max-height:86vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.35);'
+    + 'animation:psIn .35s cubic-bezier(.2,1.2,.4,1) both;-webkit-overflow-scrolling:touch}'
+    + '.ps-big{font-size:92px;line-height:1.25;text-align:center;cursor:pointer;'
+    + '-webkit-user-select:none;user-select:none;animation:psIdle 2.6s ease-in-out infinite}'
+    + '@keyframes psIdle{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}'
+    + '.ps-big.hop{animation:psHop .45s ease}'
+    + '@keyframes psHop{0%{transform:scale(1)}35%{transform:scale(1.18) rotate(-7deg)}70%{transform:scale(.94)}100%{transform:scale(1)}}'
+    + '.ps-tl{margin-top:4px}'
+    + '.ps-tlrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;'
+    + 'background:#FAF7F2;margin-bottom:8px;animation:psSlide .45s ease both}'
+    + '@keyframes psSlide{from{transform:translateX(-22px)}to{transform:none}}'
+    + '.ps-tlrow .te{font-size:32px;flex:0 0 auto;min-width:40px;text-align:center}'
+    + '.ps-tlrow.locked .te{filter:grayscale(1);opacity:.4}'
+    + '.ps-tlrow .tn{font-size:15px;font-weight:900;color:#1E2B22}'
+    + '.ps-tlrow .td{font-size:12px;color:#6B6459;margin-top:2px}'
+    + '.ps-tlrow.now{background:rgba(47,125,82,.10);box-shadow:inset 0 0 0 2px #2F7D52}'
+    + '.ps-nowtag{display:inline-block;font-size:10.5px;font-weight:900;color:#FFFDFA;'
+    + 'background:#2F7D52;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:2px}'
+    + '.ps-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}'
+    + '.ps-stat{background:#FAF7F2;border-radius:12px;padding:10px 4px;text-align:center;min-width:0}'
+    + '.ps-stat b{font-size:22px;font-weight:900;color:#1D5C39;display:block;line-height:1.2}'
+    + '.ps-stat span{font-size:11.5px;color:#6B6459}'
+    + '.ps-feedrow{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;'
+    + 'padding:8px 2px;border-bottom:1px solid #EFE9DE;color:#1E2B22;font-weight:700}'
+    + '.ps-feedrow small{color:#6B6459;font-weight:600}'
+    + '.ps-cbig{font-size:80px;text-align:center;line-height:1.25;'
+    + 'animation:psFlipIn .5s ease both;-webkit-user-select:none;user-select:none}'
+    + '@keyframes psFlipIn{from{transform:rotateY(90deg) scale(.7);opacity:0}to{transform:rotateY(0) scale(1);opacity:1}}'
+    + '.ps-cname{text-align:center;font-size:20px;font-weight:900;color:#1E2B22;margin-top:6px}'
+    + '.ps-cset{text-align:center;font-size:12.5px;color:#A24E22;font-weight:800;margin-top:4px}'
+    + '.ps-cbar{height:8px;background:#EFE9DE;border-radius:99px;overflow:hidden;margin-top:12px}'
+    + '.ps-cbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#A24E22,#E8834A);'
+    + 'border-radius:99px;transition:width .6s ease}'
+    + '.ps-cdate{text-align:center;font-size:12px;color:#6B6459;margin-top:10px;line-height:1.6}'
+    + '.ps-x{display:flex;align-items:center;justify-content:center;margin:18px auto 0;'
+    + 'min-height:46px;padding:10px 34px;border:none;border-radius:12px;background:#2F7D52;'
+    + 'color:#FFFDFA;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:transform .15s}'
+    + '.ps-x:active{transform:scale(.95)}';
   var stEl = document.createElement('style');
   stEl.id = 'ps-fun-style';
   stEl.textContent = CSS;
@@ -354,6 +397,15 @@
         var before = stageIdx(d.e || 0);
         d.e = (d.e || 0) + 1;
         var after = stageIdx(d.e);
+        /* 养成详情数据源：累计局数 + 最近喂养 + 进化时间（都存在趣味层自己的 key 里） */
+        d.n = (d.n || 0) + 1;
+        d.feed = d.feed || [];
+        d.feed.push({ t: Date.now(), s: (info && info.subj) || '练习' });
+        if (d.feed.length > 30) d.feed = d.feed.slice(-30);
+        if (after > before) {
+          d.hist = d.hist || {};
+          d.hist[after] = Date.now();
+        }
         wr(ENERGY_KEY, d);
         ensureAudio();
         if (!opts.quiet) sndWin();
@@ -390,7 +442,7 @@
         var achN = 0;
         for (var k in ACHS) if (achs[k]) achN++;
 
-        var html = '<section class="ps-petcard">'
+        var html = '<section class="ps-petcard" id="psPetCard">'
           + '<button type="button" class="ps-pet" id="psPet" aria-label="绿鳄王">' + s.emoji + '</button>'
           + '<div class="ps-petinfo">'
           + '<div class="ps-petname">' + s.name
@@ -399,7 +451,8 @@
           + '<div class="ps-ebar"><i style="width:' + pct + '%"></i></div>'
           + '<div class="ps-petnext">' + (next
               ? '再练 <b>' + (next.min - e) + '</b> 局进化成「' + next.name + '」'
-              : '<b>已是最高形态</b>，' + s.feed) + '</div>'
+              : '<b>已是最高形态</b>，' + s.feed)
+          + '　<a href="javascript:void(0)" style="color:#1D5C39;font-weight:800">详情 ▸</a></div>'
           + '</div></section>'
           + '<button type="button" class="ps-collbtn" id="psCollBtn">🎴 我的卡册 ' + gotN + '/' + ALL_CARDS.length
           + '　·　🏆 成就 ' + achN + '/' + Object.keys(ACHS).length + '</button>'
@@ -410,7 +463,8 @@
           html += '<div class="ps-setname">' + set.name + (full ? ' <span class="ok">✅ 已集齐</span>' : '') + '</div><div class="ps-cgrid">';
           set.cards.forEach(function (c) {
             var got = !!cards[c.id];
-            html += '<div class="ps-citem' + (got ? '' : ' locked') + '">'
+            html += '<div class="ps-citem' + (got ? '' : ' locked') + '" data-id="' + c.id
+              + '" style="cursor:pointer" title="点开看大卡">'
               + '<div class="ce">' + c.e + '</div>'
               + '<div class="cn">' + (got ? c.n : '？？？') + '</div></div>';
           });
@@ -435,7 +489,18 @@
           pet.classList.remove('wiggle');
           void pet.offsetWidth;
           pet.classList.add('wiggle');
+          setTimeout(openPetDetail, 380);
         };
+        var pc = el('psPetCard');
+        if (pc) pc.onclick = function (e){
+          if (e.target.closest && e.target.closest('#psPet')) return; /* emoji 自己处理 */
+          openPetDetail();
+        };
+        /* 卡册小卡：点开看大卡面详情 */
+        var items = box.querySelectorAll('.ps-citem');
+        for (var ci = 0; ci < items.length; ci++) {
+          items[ci].onclick = function(){ openCardDetail(this.getAttribute('data-id')); };
+        }
         var cb = el('psCollBtn');
         var coll = el('psColl');
         if (cb && coll) cb.onclick = function () {
@@ -482,6 +547,153 @@
   }
   function checkStreak(){
     if (streak() >= 3) unlock('streak3');
+  }
+
+  /* ================= 详情弹层（宠物养成详情 / 卡片详情，都在本页打开，不新增页面） ================= */
+  function closeDetail(){
+    var ov = document.getElementById('psDetail');
+    if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+  }
+  function openDetail(inner, after){
+    closeDetail();
+    var ov = document.createElement('div');
+    ov.id = 'psDetail';
+    ov.className = 'ps-detail';
+    ov.innerHTML = '<div class="ps-dbox">' + inner + '</div>';
+    document.body.appendChild(ov);
+    /* 下一帧再 .show，让透明度过渡生效 */
+    requestAnimationFrame(function(){ ov.classList.add('show'); });
+    ov.onclick = function (e){ if (e.target === ov) closeDetail(); };
+    var xb = ov.querySelector('.ps-x');
+    if (xb) xb.onclick = closeDetail;
+    if (after) after(ov);
+  }
+  function fmtDay(ts){
+    var t = new Date(ts), n = new Date();
+    var a = new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime();
+    var b = new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+    var d = Math.round((a - b) / 86400000);
+    if (d === 0) return '今天';
+    if (d === 1) return '昨天';
+    return (t.getMonth() + 1) + '月' + t.getDate() + '日';
+  }
+  /* 数字从 0 滚到目标值 */
+  function countUp(box){
+    var els = box.querySelectorAll('[data-n]');
+    for (var i = 0; i < els.length; i++) {
+      (function (el) {
+        var n = parseInt(el.getAttribute('data-n') || '0', 10);
+        if (!n) { el.textContent = '0'; return; }
+        var st = Date.now();
+        var tick = function () {
+          var p = Math.min((Date.now() - st) / 700, 1);
+          var v = Math.round(n * (1 - Math.pow(1 - p, 2)));
+          el.textContent = v;
+          if (p < 1 && el.parentNode) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      })(els[i]);
+    }
+  }
+
+  /* 每个阶段一句不同的鼓励语 */
+  var ENCOURAGE = [
+    ['练一局，我就能醒啦！', '里面好暖和…不，我想出去看看你！'],
+    ['我孵出来啦！多练几局我还要长大！', '今天喂我了吗？练一局就行！'],
+    ['我是绿鳄王！陪你冲一百连击！', '下一站：机器鳄鱼王！'],
+    ['喷火待命中！全靠你把我养成最帅的鳄鱼！', '谁连击最多？肯定是你！']
+  ];
+
+  function petDetailHtml(){
+    var d = rd(ENERGY_KEY);
+    var e = d.e || 0, idx = stageIdx(e), s = STAGES[idx];
+    var feed = (d.feed || []).slice().reverse();
+    var hist = d.hist || {};
+    var rows = '';
+    for (var i = 0; i < STAGES.length; i++) {
+      var st = STAGES[i];
+      var unlocked = e >= st.min;
+      var cls = 'ps-tlrow' + (i === idx ? ' now' : '') + (unlocked ? '' : ' locked');
+      var info;
+      if (i === idx) info = '当前形态 · 能量 ' + e;
+      else if (unlocked) info = hist[i] ? fmtDay(hist[i]) + '进化' : '已进化';
+      else info = '再练 ' + (st.min - e) + ' 局解锁';
+      rows += '<div class="' + cls + '" style="animation-delay:' + (i * 0.09 + 0.15) + 's">'
+        + '<span class="te">' + st.emoji + '</span>'
+        + '<span><div class="tn">' + st.name + (i === idx ? '<span class="ps-nowtag">现在</span>' : '') + '</div>'
+        + '<div class="td">' + info + '</div></span></div>';
+    }
+    var feedHtml = '<div class="ps-setname" style="margin-top:14px">🍽️ 最近喂养</div>';
+    if (feed.length) {
+      for (var k = 0; k < Math.min(feed.length, 5); k++) {
+        feedHtml += '<div class="ps-feedrow"><span>' + feed[k].s + '</span><small>' + fmtDay(feed[k].t) + '</small></div>';
+      }
+    } else {
+      feedHtml += '<div class="ps-feedrow"><span>还没喂过，练一局试试</span><small>—</small></div>';
+    }
+    var enc = ENCOURAGE[idx][Math.floor(Math.random() * ENCOURAGE[idx].length)];
+    return '<div class="ps-big" id="psBig">' + s.emoji + '</div>'
+      + '<div class="ps-cname">' + s.name + ' · 能量 ' + e + '</div>'
+      + '<div class="ps-cset">' + enc + '</div>'
+      + '<div class="ps-stats">'
+      + '<div class="ps-stat"><b data-n="' + e + '">0</b><span>总能量</span></div>'
+      + '<div class="ps-stat"><b data-n="' + streak() + '">0</b><span>连续天数</span></div>'
+      + '<div class="ps-stat"><b data-n="' + (d.n || e) + '">0</b><span>累计局数</span></div>'
+      + '</div>'
+      + '<div class="ps-setname" style="margin-top:14px">🌱 成长时间线</div>'
+      + '<div class="ps-tl">' + rows + '</div>'
+      + feedHtml
+      + '<button type="button" class="ps-x">知道啦</button>';
+  }
+  function openPetDetail(){
+    openDetail(petDetailHtml(), function (ov){
+      countUp(ov);
+      var big = ov.querySelector('#psBig');
+      if (big) big.onclick = function () {
+        /* 戳一下：跳 + 音调随能量升高 */
+        ensureAudio();
+        var m = pitch(Math.min(energy(), 12));
+        beep(523 * m, .1, 'sine', 0); beep(659 * m, .12, 'sine', .09); beep(784 * m, .16, 'sine', .18);
+        big.classList.remove('hop');
+        void big.offsetWidth;
+        big.classList.add('hop');
+      };
+    });
+  }
+
+  function cardDetailHtml(c){
+    var owned = rd(CARD_KEY);
+    var got = !!owned[c.id];
+    var set = null;
+    for (var i = 0; i < SETS.length; i++) if (SETS[i].id === c.set) set = SETS[i];
+    var cnt = 0;
+    for (var j = 0; j < set.cards.length; j++) if (owned[set.cards[j].id]) cnt++;
+    var pct = Math.round(cnt / set.cards.length * 100);
+    var head = got
+      ? '<div class="ps-cbig">' + c.e + '</div>'
+        + '<div class="ps-cname">' + c.n + '</div>'
+        + '<div class="ps-cset">「' + set.name + '」系列 · ' + cnt + '/' + set.cards.length
+        + (cnt === set.cards.length ? ' ✅ 已集齐' : '') + '</div>'
+      : '<div class="ps-cbig" style="filter:grayscale(1);opacity:.4">' + c.e + '</div>'
+        + '<div class="ps-cname">？？？</div>'
+        + '<div class="ps-cset">「' + set.name + '」系列 · ' + cnt + '/' + set.cards.length + '</div>';
+    return { html: head
+      + '<div class="ps-cbar"><i></i></div>'
+      + '<div class="ps-cdate">' + (got
+        ? (typeof owned[c.id] === 'number' ? fmtDay(owned[c.id]) + '获得这张卡' : '已收进卡册')
+        : '答对就有机会掉落这张卡（大约 5 次掉 1 张）') + '</div>'
+      + '<button type="button" class="ps-x">' + (got ? '收起' : '去练一局！') + '</button>',
+      pct: pct };
+  }
+  function openCardDetail(cid){
+    var c = null;
+    for (var i = 0; i < ALL_CARDS.length; i++) if (ALL_CARDS[i].id === cid) c = ALL_CARDS[i];
+    if (!c) return;
+    var r = cardDetailHtml(c);
+    openDetail(r.html, function (ov){
+      var bar = ov.querySelector('.ps-cbar i');
+      if (bar) setTimeout(function(){ if (bar.parentNode) bar.style.width = r.pct + '%'; }, 100);
+    });
   }
 
   window.PS = PS;
