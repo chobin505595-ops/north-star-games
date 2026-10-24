@@ -132,11 +132,45 @@ h1{font-size:22px;letter-spacing:-.2px}
   margin-top:3px;line-height:1.4}
 .listen.off{background:#F4F1EC;border-color:var(--line);cursor:default}
 .listen.off b{color:var(--ink2)}
+
+/* ===== iPad 大屏增强：加宽 + 字号放大 + 横屏题/选项并排 ===== */
+@media (min-width:768px){
+  #app{max-width:680px}
+  h1{font-size:26px}
+  .sub{font-size:15px}
+  .tab{font-size:16px;padding:13px}
+  .flash .emo{font-size:64px}
+  .flash .cn{font-size:34px}
+  .flash .en{font-size:44px}
+  .flash .hint{font-size:15px}
+  .opt{font-size:22px;min-height:64px;padding:18px 18px}
+  .sentence{font-size:28px}
+  .btn{font-size:17px;min-height:58px}
+  .listen{min-height:84px}
+  .listen b{font-size:19px}
+  .fb{font-size:18px}
+}
+/* 横屏 iPad：题卡在左、选项在右（:has 不支持的旧浏览器自动忽略，回退上下排） */
+@media (min-width:1100px) and (max-height:950px){
+  .card:has(.mt16 .opt){
+    display:grid;grid-template-columns:1.05fr .95fr;
+    column-gap:20px;align-items:center;
+  }
+  .card:has(.mt16 .opt) > .topbar,
+  .card:has(.mt16 .opt) > .prog,
+  .card:has(.mt16 .opt) > .fb,
+  .card:has(.mt16 .opt) > .btn{grid-column:1 / -1}
+  .card:has(.mt16 .opt) > .flash,
+  .card:has(.mt16 .opt) > .sentence,
+  .card:has(.mt16 .opt) > .listen{grid-column:1}
+  .card:has(.mt16 .opt) > .mt16{grid-column:2;align-self:center;min-width:0}
+  .card:has(.mt16 .opt) .opt{min-width:0}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<script src="fun.js?v=1021j"></script>
+<script src="fun.js?v=1021k"></script>
 <script>
 /* ============================================================
    英语 · 北极星学习屋
@@ -569,6 +603,6 @@ function bindBase(){
 
 render();
 </script>
-<script src="nav.js"></script>
+<script src="nav.js?v=1021k"></script>
 </body>
 </html>

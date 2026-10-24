@@ -118,6 +118,40 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
   margin-top:3px;line-height:1.4}
 .listen.off{background:#F4F1EC;border-color:#E4DCD0;cursor:default}
 .listen.off b{color:#5F584C}
+
+/* ===== iPad 大屏增强：加宽 + 字号放大 + 横屏题/选项并排 ===== */
+@media (min-width:768px){
+  #app{max-width:720px}
+  h1{font-size:34px}
+  .sub{font-size:17px}
+  .qctx{font-size:23px}
+  .qhint{font-size:16px}
+  .opt{font-size:28px;min-height:72px}
+  .opts.txt .opt{font-size:21px}
+  .ansinput{font-size:32px;min-height:72px}
+  .ansinput::placeholder{font-size:20px}
+  .btn{font-size:21px;min-height:60px}
+  .feedback{font-size:19px}
+  .levels{grid-template-columns:1fr 1fr 1fr}
+  .badge{font-size:14.5px}
+}
+/* 横屏 iPad：题目在左、选项/输入在右 */
+@media (min-width:1100px) and (max-height:950px){
+  .screen:has(.qbox){
+    display:grid;grid-template-columns:1.1fr .9fr;
+    column-gap:20px;align-items:center;
+  }
+  .screen:has(.qbox) > .topbar,
+  .screen:has(.qbox) > .progress,
+  .screen:has(.qbox) > .timer,
+  .screen:has(.qbox) > .feedback,
+  .screen:has(.qbox) > .sound{grid-column:1 / -1}
+  .screen:has(.qbox) > .qbox{grid-column:1;align-self:center}
+  .screen:has(.qbox) > .opts,
+  .screen:has(.qbox) > .inputrow{grid-column:2;align-self:center;min-width:0}
+  .screen:has(.qbox) .ansinput{min-width:0}
+  .screen:has(.qbox) .opt{min-width:0}
+}
 </style>
 </head>
 <body>
@@ -125,7 +159,7 @@ h1{font-size:30px;font-weight:900;line-height:1.2;text-align:center}
 <div id="toast"></div>
 <div id="overlay"></div>
 
-<script src="fun.js?v=1021j"></script>
+<script src="fun.js?v=1021k"></script>
 <script>
 /* ===== 关卡定义（融入张蔚桐的兴趣） ===== */
 var LEVELS = [
@@ -693,6 +727,6 @@ function bindSound(){
 
 render();
 </script>
-<script src="nav.js"></script>
+<script src="nav.js?v=1021k"></script>
 </body>
 </html>

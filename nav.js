@@ -53,7 +53,8 @@
     if (appEl) {
       appEl.style.margin = '0 auto';
       appEl.style.width = '100%';
-      appEl.style.maxWidth = '560px';
+      /* 720 上限：手机上仍是 100% 宽，iPad 上配合页面媒体查询放宽（1021k 起不再写死 560） */
+      appEl.style.maxWidth = '720px';
     }
   }
 

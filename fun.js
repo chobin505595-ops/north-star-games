@@ -239,7 +239,27 @@
     + '.ps-x{display:flex;align-items:center;justify-content:center;margin:18px auto 0;'
     + 'min-height:46px;padding:10px 34px;border:none;border-radius:12px;background:#2F7D52;'
     + 'color:#FFFDFA;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:transform .15s}'
-    + '.ps-x:active{transform:scale(.95)}';
+    + '.ps-x:active{transform:scale(.95)}'
+    /* ===== iPad 大屏增强 ===== */
+    + '@media (min-width:768px){'
+    + '.ps-dbox{max-width:440px;padding:26px 24px}'
+    + '.ps-big{font-size:110px}'
+    + '.ps-cbig{font-size:96px}'
+    + '.ps-pet{width:76px;height:76px;font-size:44px;border-radius:18px}'
+    + '.ps-petcard{padding:16px 20px;border-radius:22px}'
+    + '.ps-petname{font-size:17px}'
+    + '.ps-petnext{font-size:13px}'
+    + '.ps-collbtn{min-height:56px;font-size:16.5px}'
+    + '.ps-cgrid{grid-template-columns:repeat(4,1fr)}'
+    + '.ps-citem .ce{font-size:36px}'
+    + '.ps-drop{bottom:110px;padding:12px 22px}'
+    + '.ps-drop .de{font-size:40px}'
+    + '.ps-drop .dn{font-size:16px}'
+    + '.ps-drop .dt{font-size:12.5px}'
+    + '.ps-x{min-height:52px;font-size:16px}'
+    + '.ps-tlrow .te{font-size:38px}'
+    + '.ps-stat b{font-size:26px}'
+    + '}';
   var stEl = document.createElement('style');
   stEl.id = 'ps-fun-style';
   stEl.textContent = CSS;

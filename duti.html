@@ -102,12 +102,43 @@ h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-he
   .opt{font-size:15.5px;padding:13px 14px}
   .calcexpr{font-size:23px}
 }
+
+/* ===== iPad 大屏增强：加宽 + 字号放大 + 横屏题/答案并排 ===== */
+@media (min-width:768px){
+  #app{max-width:700px}
+  h1{font-size:26px}
+  .sub{font-size:15px}
+  .qtext{font-size:24px}
+  .asklabel{font-size:17px}
+  .opt{font-size:19px;padding:18px 18px}
+  .calcexpr{font-size:32px}
+  .ansinput{font-size:28px;min-height:62px}
+  .btn{min-height:58px;font-size:16.5px}
+  .fb{font-size:17px}
+}
+/* 横屏 iPad：题目在左、选项/计算在右 */
+@media (min-width:1100px) and (max-height:950px){
+  .card:has(.qbox){
+    display:grid;grid-template-columns:1.05fr .95fr;
+    column-gap:20px;align-items:center;
+  }
+  .card:has(.qbox) > .topbar,
+  .card:has(.qbox) > .prog,
+  .card:has(.qbox) > .fb,
+  .card:has(.qbox) > .btn,
+  .card:has(.qbox) > .note{grid-column:1 / -1}
+  .card:has(.qbox) > .qbox{grid-column:1;align-self:center}
+  .card:has(.qbox) > .asklabel{grid-column:1}
+  .card:has(.qbox) > .opt{grid-column:2;margin-bottom:12px;min-width:0}
+  .card:has(.qbox) > .calcbox{grid-column:2;align-self:center;margin-bottom:0;min-width:0}
+  .card:has(.qbox) .ansinput{min-width:0}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
 
-<script src="fun.js?v=1021j"></script>
+<script src="fun.js?v=1021k"></script>
 <script>
 /* ============================================================
    读题训练
@@ -297,7 +328,7 @@ function renderHome(){
   app.innerHTML = html;
 
   document.getElementById('startBtn').onclick = startRound;
-  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021j'; };
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021k'; };
 }
 
 /* ---------- 第一步：问的是什么 ---------- */
@@ -515,7 +546,7 @@ function backHome(){
 /* 底部导航 */
 (function(){
   var s = document.createElement('script');
-  s.src = 'nav.js';
+  s.src = 'nav.js?v=1021k';
   document.body.appendChild(s);
 })();
 
