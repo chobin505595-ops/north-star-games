@@ -59,7 +59,15 @@
   }
 
   document.getElementById('pnavBack').onclick = function () {
-    if (window.history.length > 1) window.history.back();
+    /* 稳妥的返回：只有"确实是从本站另一个页面点进来"才用历史返回；
+       直接打开（书签/主屏幕图标）或从外部链接进来时，历史返回会退到空白页，
+       改为直接回首页（1021l 修复） */
+    var fromSite = false;
+    try {
+      var ref = document.referrer || '';
+      fromSite = !!ref && new URL(ref).origin === location.origin;
+    } catch (e) {}
+    if (fromSite && window.history.length > 1) window.history.back();
     else window.location.href = 'index.html';
   };
 })();

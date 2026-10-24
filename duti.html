@@ -138,7 +138,7 @@ h1{font-size:22px;font-weight:900;letter-spacing:-.2px;text-align:center;line-he
 <body>
 <div id="app"></div>
 
-<script src="fun.js?v=1021k"></script>
+<script src="fun.js?v=1021l"></script>
 <script>
 /* ============================================================
    读题训练
@@ -328,7 +328,7 @@ function renderHome(){
   app.innerHTML = html;
 
   document.getElementById('startBtn').onclick = startRound;
-  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021k'; };
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021l'; };
 }
 
 /* ---------- 第一步：问的是什么 ---------- */
@@ -535,7 +535,8 @@ function renderDone(){
   app.innerHTML = html;
 
   document.getElementById('againBtn').onclick = startRound;
-  document.getElementById('backBtn').onclick = backHome;
+  /* 结果页「回首页」= 真回站点首页（1021l 修复） */
+  document.getElementById('backBtn').onclick = function(){ location.href = 'index.html?v=1021l'; };
 }
 
 function backHome(){
@@ -546,7 +547,7 @@ function backHome(){
 /* 底部导航 */
 (function(){
   var s = document.createElement('script');
-  s.src = 'nav.js?v=1021k';
+  s.src = 'nav.js?v=1021l';
   document.body.appendChild(s);
 })();
 

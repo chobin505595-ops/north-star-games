@@ -170,7 +170,7 @@ h1{font-size:22px;letter-spacing:-.2px}
 </head>
 <body>
 <div id="app"></div>
-<script src="fun.js?v=1021k"></script>
+<script src="fun.js?v=1021l"></script>
 <script>
 /* ============================================================
    英语 · 北极星学习屋
@@ -598,11 +598,12 @@ function bindBase(){
   var ag = document.getElementById('againBtn');
   if (ag) ag.onclick = function(){ startRound(WORDS_U2); };
   var bk = document.getElementById('backBtn');
-  if (bk) bk.onclick = function(){ state.queue = []; state.done = false; render(); };
+  /* 结果页的「回首页」= 真回站点首页（1021l 修复：原来只回本页开始屏） */
+  if (bk) bk.onclick = function(){ location.href = 'index.html?v=1021l'; };
 }
 
 render();
 </script>
-<script src="nav.js?v=1021k"></script>
+<script src="nav.js?v=1021l"></script>
 </body>
 </html>
